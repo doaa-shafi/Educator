@@ -1,0 +1,80 @@
+.create-course-container {
+    display: flex;
+}
+
+.create-course-left {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 2px;
+    padding: 4rem;
+    width: 90vw;
+}
+
+.create-course-title {
+    font-weight: 400;
+    font-size: 1.7rem;
+    margin-bottom: 1rem;
+}
+
+.create-course-desc {
+    font-weight: 300;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.create-course-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+}
+
+.create-course-input {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.no-border-select {
+    border: none;
+    outline: none;
+    background-color: #f0f0f0;
+    /* Optional: Customize background color */
+    padding: 10px;
+    /* Optional: Customize padding */
+    border-radius: 4px;
+    /* Optional: Customize border-radius */
+}
+
+.no-border-select:focus {
+    outline: none;
+    /* Ensure no outline when focused */
+}
+.inin{
+    border: none;
+    border-bottom: 1px solid #1111113d;
+    width: 25%;
+}
+.upload-video{
+    margin-top: 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.preview-window{
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 320px;
+    height: 180px;
+    position: relative;
+    overflow: hidden;
+}
+.no-preview{
+    position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translate(-50%, -50%);
+}

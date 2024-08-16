@@ -1,0 +1,9 @@
+.corporate-db{
+    display: flex;
+}
+.corporate-db-side-menue{
+    width:13%;
+    height: 100%;
+    padding: 2rem;
+    background-color: rgba(128, 128, 128, 0.163);
+}

@@ -1,0 +1,125 @@
+.container {
+    position: relative;
+}
+
+img {
+    width: 100%;
+    opacity: 0.9;
+}
+
+/* Bottom right text */
+.card {
+    display: flex;
+    padding-left: 50px;
+
+    background-color: white;
+    border-radius: 2%;
+
+}
+
+.sign-up-options {
+    display: flex;
+    gap: 15px;
+    margin: 20px;
+
+}
+
+.sign-up-option {
+    border-radius: 50px;
+    width: 3rem;
+    height: 3rem;
+    border: 2px solid #00000024;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sign-up-logo {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50px;
+    object-fit: cover;
+
+}
+
+.line {
+    margin: 20px;
+}
+
+.line span {
+    margin-left: 10px;
+    margin-right: 10px;
+
+}
+
+.inputs {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.label1 {
+    font-weight: 500;
+    font-size: small;
+    color: rgba(0, 0, 0, 0.596);
+}
+
+.contin {
+    background-color: rgb(10, 67, 136);
+    /* Blue background color */
+    color: #fff;
+    /* Text color (white) */
+    border: none;
+    /* Optional: Remove default border */
+    padding: 10px 20px;
+    /* Optional: Adjust padding for button size */
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-self: flex-end;
+}
+.back {
+    background-color: rgb(10, 67, 136);
+    /* Blue background color */
+    color: #fff;
+    /* Text color (white) */
+    border: none;
+    /* Optional: Remove default border */
+    padding: 10px 20px;
+    /* Optional: Adjust padding for button size */
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-self: flex-start;
+}
+.buttons{
+    display: flex;
+    justify-content:space-between;
+}
+
+.input {
+    margin: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input {
+    border: none;
+    border-bottom: 1px solid #111111;
+}
+
+input:focus {
+    outline: none;
+    border-bottom-color: #007bff;
+    /* Change color to blue on focus */
+}
+.check{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.l{
+    color: rgba(10, 67, 136, 0.773);
+}

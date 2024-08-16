@@ -1,0 +1,159 @@
+.slider {
+  width: 100%;
+  height: 75vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: all 0.5s ease;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+}
+
+.current {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.content {
+  position: absolute;
+  top: 40%;
+  left: 10%;
+  opacity: 0;
+  width: 50%;
+  color: #fff;
+  padding: 3rem;
+  background: rgba(0, 0, 0, 0.3);
+  animation: slide-up 1s ease 0.5s;
+  animation-fill-mode: forwards;
+  visibility: hidden;
+}
+
+@keyframes slide-up {
+  0% {
+    visibility: visible;
+    position: absolute;
+    top: 80%;
+  }
+  100% {
+    visibility: visible;
+    position: absolute;
+    top: 40%;
+  }
+}
+
+
+.content > * {
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.current .content {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.5s ease;
+}
+
+.arrow {
+  border: 2px solid white;
+  background-color: transparent;
+  color: #fff;
+  cursor: pointer;
+  height: 2rem;
+  width: 2rem;
+  border-radius: 50%;
+  position: absolute;
+  z-index: 999;
+}
+.arrow:hover {
+  background-color: #fff;
+  color: #777;
+}
+
+.next {
+  top: 30%;
+  right: 1vh;
+}
+.prev {
+  top: 30%;
+  left: 1vh;
+}
+
+@media screen and (max-width: 500px) {
+  
+}
+p{
+  font-size: 1.2rem;
+
+}
+
+
+
+hr {
+  height: 2px;
+  background: white;
+  width: 50%;
+}
+@media screen and (max-width: 900px) {
+  .slider {
+    height: 60vh;
+  }
+  @keyframes slide-up {
+    0% {
+      visibility: visible;
+      position: absolute;
+      top: 80%;
+    }
+    100% {
+      visibility: visible;
+      position: absolute;
+      top: 10%;
+    }
+  }
+  .content {
+    width: 80%;
+  }
+  h2{
+    font-size: 1.2rem;
+  }
+  p{
+    font-size: 1rem;
+  }
+}
+@media screen and (max-width: 500px) {
+  .slider {
+    height: 40vh;
+  }
+  @keyframes slide-up {
+    0% {
+      visibility: visible;
+      position: absolute;
+      top: 80%;
+    }
+    100% {
+      visibility: visible;
+      position: absolute;
+      top: 20%;
+    }
+  }
+  
+  p{
+    font-size: 0.8rem;
+  }
+}
+button{
+  border: 1px solid white ;
+  background: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}

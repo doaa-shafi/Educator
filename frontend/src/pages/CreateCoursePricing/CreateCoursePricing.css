@@ -1,0 +1,27 @@
+.create-course-navbar{
+    background-color:white;
+    color:rgb(10, 67, 136);
+    margin-bottom: 20px;
+    height: 6vh;
+    display: flex;
+    gap: 40px;
+    padding-left: 100px;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    
+}
+.create-course-nav-item{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+.create-course-pricing-input{
+    display: flex;
+    gap: 20px;
+}
+.price-select{
+    flex: 1;
+}

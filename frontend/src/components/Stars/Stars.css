@@ -1,0 +1,6 @@
+.stars div{
+    display: flex;
+}
+.stars div .icon{
+    color:#e1ab22;
+}
