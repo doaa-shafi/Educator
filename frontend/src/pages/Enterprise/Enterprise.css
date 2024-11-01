@@ -1,173 +1,21 @@
-.enterprise-header {
+.enterprise-plans{
     display: flex;
-    height: 70vh;
-    width: 100%;
-}
-
-.enterprise-image {
-    width: 50%;
-}
-
-.enterpriseTitle {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
     justify-content: center;
-    align-items: center;
-    gap: 1.5rem;
-    background-color: #c0dde969;
-}
-
-.enterpriseTitle1 {
-    font-size: 2rem;
-    color: rgb(10, 67, 136);
-}
-
-.enterpriseTitle2 {
-    font-size: 1rem;
-    color: rgb(10, 67, 136);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.enterpriseTitle2-section {
-    display: flex;
-    gap: 10px;
-}
-
-.check-icon {}
-
-.enterpriseTitle3 {
-    font-size: 0.8rem;
-    padding: 10px;
-    margin: 10px;
-    font-weight: 500;
-}
-
-.why {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-top: 2rem;
-    gap: 2rem;
-    margin-top: 10rem;
-}
-
-.why-elements {
-    display: flex;
-}
-
-.why-element {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    margin-top: 30px;
 
 }
-
-.paymentPolicy {
-    margin-top: 10rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1.5rem;
-    background-color: rgba(128, 128, 128, 0.144);
-    padding: 5rem;
-}
-
-.how {
-    margin-top: 10rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-.card3 {
-    margin-top: 10rem;
-    padding: 5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: #c0dde9e4;
-}
-
-.plans-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    text-align: center;
-  }
-  
-  .plans-title {
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin-bottom: 40px;
-  }
-  
-  .plans {
-    display: flex;
-    justify-content: space-around;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .plan-card {
-    background-color: #e0e0e05c;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    padding: 30px;
-    width: 100%;
-    max-width: 500px;
-    transition: transform 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-  }
-  
-  .plan-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  .plan-type {
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #333;
-  }
-  
-  .plan-price {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: rgb(10, 67, 136);
-    margin-bottom: 20px;
-  }
-  
-  .plan-details {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    font-size: 1.1rem;
-    color: #666;
-  }
-  
-  .plan-details p {
-    margin: 15px 0;
-    font-size: 1rem;
-  }
-  
-  
-  
-  @media (max-width: 768px) {
-    .plans {
-      flex-direction: column;
-      align-items: center;
+@keyframes slideDown {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -100%); /* Slide from top while horizontally centered */
     }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -50%); /* Final position: vertically centered */
+    }
+  }
+  
+  .modal-content {
+    animation: slideDown 0.5s ease-out;
   }
   

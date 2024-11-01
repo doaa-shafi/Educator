@@ -20,7 +20,7 @@ const enrollmentSchema = mongoose.Schema(
     },
     completedDuration: {
       type: Number,
-      default: 0, // Sum of completed item durations
+      default: 0, 
     },
     totalDuration: {
       type: Number,

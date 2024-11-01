@@ -1,11 +1,19 @@
 const courseService = require("../services/course");
 const {idSchema,page_limitSchema}=require('../validatationSchemas/id,page,limit')
-const {createCourseSchema,courseTitleSchema,courseLearningSchema,coursePricingSchema,videoURLSchema}=require('../validatationSchemas/course')
+const {updateCourseSchema,courseTitleSchema}=require('../validatationSchemas/course')
 const validate=require('../helpers/validate');
 const authorize = require("../helpers/authorize");
 const {RESOURSES_NAMES,ACTIONS_NAMES}=require('../config/constants')
 
-
+const searchAndFilterCourses= async (req,res,next)=>{
+  const { search, level, priceMin, priceMax, subject } = req.query;
+  try {
+    const courses=await courseService.searchAndFilterCourses(search, level, priceMin, priceMax, subject)
+    res.status(200).json(courses)
+  } catch (error) {
+    next(error)
+  }
+}
 const getPopulerCoursesInfo= async (req,res,next)=>{
   try {
     const courses= await courseService.getPopulerCoursesInfo();
@@ -18,7 +26,7 @@ const getPopulerCoursesInfo= async (req,res,next)=>{
 const getDraftCourses= async (req,res,next)=>{
   const instructor=req.id
   try {
-    authorize(req.role,RESOURSES_NAMES.Course_full,[ACTIONS_NAMES.READ_OWN])
+    authorize(req.role,RESOURSES_NAMES.Course_full,[ACTIONS_NAMES.READ_OWN],true)
     const courses= await courseService.getDraftCourses(instructor);
     res.status(200).json(courses)
   } catch (error) {
@@ -26,9 +34,23 @@ const getDraftCourses= async (req,res,next)=>{
   }
 
 }
-const getClosedCourses= async (req,res,next)=>{
+const getDraftCourse= async (req,res,next)=>{
+  const instructor=req.id
+  const courseId=req.params.id
   try {
-    const courses= await courseService.getPopulerCoursesInfo();
+    authorize(req.role,RESOURSES_NAMES.Course_full,[ACTIONS_NAMES.READ_OWN],true)
+    const course= await courseService.getDraftCourse(instructor,courseId);
+    res.status(200).json(course)
+  } catch (error) {
+    next(error)
+  }
+
+}
+const getClosedCourses= async (req,res,next)=>{
+  const instructor=req.id
+  try {
+    authorize(req.role,RESOURSES_NAMES.Course_full,[ACTIONS_NAMES.READ_OWN],true)
+    const courses= await courseService.getClosedCourses(instructor);
     res.status(200).json(courses)
   } catch (error) {
     next(error)
@@ -49,11 +71,11 @@ const getCoursesInfo = async (req, res,next) => {
 const getCourseInfo = async (req, res,next) => {
   const  id  = req.params.id;
   try {
-    
     validate(idSchema,{id:id})
     const course=await courseService.getCourseInfo(id)
     res.status(200).json(course);
   } catch (error) {
+    console.log(error)
     next(error)
   }  
 };
@@ -79,72 +101,22 @@ const createCourse = async (req, res,next) => {
     next(error)
   }   
 };
-const updateCourseInfo = async (req, res,next) => {
-  const {title,description,subject} = req.body;
-  const id=req.params.id;
+
+const updateCourse = async (req, res,next) => {
+  const courseId  = req.params.id; 
+  const updateFields = req.body; 
   try {
-    authorize(req.role,RESOURSES_NAMES.Course_full,[ACTIONS_NAMES.UPDATE_OWN])
-    validate(createCourseSchema,{title:title,description:description,subject:subject})
-    const course=await courseService.updateCourseInfo(id,title,description,subject)
-    res.status(201).json(course);
+    validate(updateCourseSchema, updateFields);
+    const updatedCourse=await courseService.updateCourse(courseId,updateFields)
+    res.status(200).json(updatedCourse);
   } catch (error) {
     next(error)
-  }   
+  }
 };
-const uploadPreviewVideo = async (req, res,next) => {
-  const { previewVideo } = req.body;
-  const course_id=req.params.id
-  const instructor=req.id
-  try {
-    authorize(req.role,RESOURSES_NAMES.Course_full,[ACTIONS_NAMES.UPDATE_OWN],true)//codition to be performed later in the service
-    validate(videoURLSchema,{previewVideo})
-    validate(idSchema,{id:course_id})
-    const course=await courseService.uploadPreviewVideo(previewVideo,course_id,instructor)
-    res.status(201).json(course);
-  } catch (error) {
-    next(error)
-  }  
-}
-
-const updateCourcePricing = async (req, res,next) => {
-  const {price,quantity,discountStart,discountEnd} = req.body;
-  const course_id=req.params.id
-  const instructor=req.id
-  try {
-    authorize(req.role,RESOURSES_NAMES.Course_full,[ACTIONS_NAMES.UPDATE_OWN],true)//codition to be performed later in the service
-    if(quantity>0){
-      validate(coursePricingSchema,{price,quantity,discountStart,discountEnd})
-    }else{
-      validate(coursePricingSchema,{price})
-    }
-    
-    validate(idSchema,{id:course_id})
-    const course=await courseService.updateCourcePricing(price,quantity,discountStart,discountEnd,course_id,instructor)
-    res.status(201).json(course);
-  } catch (error) {
-    next(error)
-  }  
-}
-
-const updateCourselearnings = async (req, res,next) => {
-  const { requirements,learnings,level } = req.body;
-  const course_id=req.params.id
-  const instructor=req.id
-  try {
-    authorize(req.role,RESOURSES_NAMES.Course_full,[ACTIONS_NAMES.UPDATE_OWN],true)//codition to be performed later in the service
-    validate(courseLearningSchema,{requirements,learnings,level})
-    validate(idSchema,{id:course_id})
-    const course=await courseService.updateCourselearnings(requirements,learnings,level,course_id,instructor)
-    res.status(201).json(course);
-  } catch (error) {  
-    next(error)
-  }  
-}
 
 const publishCourse=async(req,res,next)=>{
   const {courseId}=req.body;
   const instructorId=req.id;
-  
   try {
     authorize(req.role,RESOURSES_NAMES.Course_full,[ACTIONS_NAMES.UPDATE_OWN],true)//codition to be performed later in the service
     const message=await courseService.publishCourse(courseId,instructorId)
@@ -166,19 +138,47 @@ const closeCourse=async(req,res,next)=>{
   }
 
 }
+const cloneCourseAsDraft=async(req,res,next)=>{
+  const courseId=req.params.id;
+  const instructorId=req.id;
+  const {oldCourseTitle,newCourseTitle}=req.body
+  try {
+    authorize(req.role,RESOURSES_NAMES.Course_full,[ACTIONS_NAMES.UPDATE_OWN],true)//codition to be performed later in the service
+    const message=await courseService.cloneCourseAsDraft(courseId,instructorId,oldCourseTitle,newCourseTitle)
+    res.status(201).json(message)
+  } catch (error) {
+    next(error)
+  }
 
+}
+
+const openClosedCourse=async(req,res,next)=>{
+  const courseId=req.params.id;
+  const instructorId=req.id;
+  const {oldCourseTitle}=req.body
+  try {
+    authorize(req.role,RESOURSES_NAMES.Course_full,[ACTIONS_NAMES.UPDATE_OWN],true)//codition to be performed later in the service
+    const message=await courseService.openClosedCourse(courseId,instructorId,oldCourseTitle)
+    res.status(201).json(message)
+  } catch (error) {
+    next(error)
+  }
+
+}
 
 module.exports = {
+  searchAndFilterCourses,
   getPopulerCoursesInfo,
   getDraftCourses,
+  getDraftCourse,
+  createCourse,
+  updateCourse,
   getCoursesInfo,
   getCourseInfo,
   getCourse,
-  createCourse,
-  updateCourseInfo,
-  uploadPreviewVideo,
-  updateCourcePricing,
-  updateCourselearnings,
+  getClosedCourses,
   publishCourse,
   closeCourse,
+  cloneCourseAsDraft,
+  openClosedCourse
 }

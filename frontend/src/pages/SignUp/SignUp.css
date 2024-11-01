@@ -1,19 +1,5 @@
-.container {
-    position: relative;
-}
-
-img {
-    width: 100%;
-    opacity: 0.9;
-}
-
-/* Bottom right text */
-.card {
-    display: flex;
-    padding-left: 50px;
-
-    background-color: white;
-    border-radius: 2%;
+.login-card {
+    
 
 }
 
@@ -45,7 +31,9 @@ img {
 .line {
     margin: 20px;
 }
-
+.line hr{
+    width: 50% !important;
+}
 .line span {
     margin-left: 10px;
     margin-right: 10px;
@@ -64,29 +52,31 @@ img {
 }
 
 .contin {
-    background-color: rgb(10, 67, 136);
-    /* Blue background color */
+    background-color:#4da7cc;
     color: #fff;
-    /* Text color (white) */
     border: none;
-    /* Optional: Remove default border */
-    padding: 10px 20px;
-    /* Optional: Adjust padding for button size */
+    padding: 5px 20px;
+    font-size: 1rem !important;
+    font-weight: bold;
     cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     display: flex;
     justify-content: center;
     align-items: center;
     align-self: flex-end;
+    border-radius: 5px;
 }
 .back {
-    background-color: rgb(10, 67, 136);
-    /* Blue background color */
+    background-color:#4da7cc;
     color: #fff;
-    /* Text color (white) */
     border: none;
-    /* Optional: Remove default border */
-    padding: 10px 20px;
-    /* Optional: Adjust padding for button size */
+    border-radius: 5px;
+    padding: 5px 20px;
+    font-size: 1rem !important;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     cursor: pointer;
     display: flex;
     justify-content: center;
@@ -103,22 +93,20 @@ img {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    width: 70%;
 }
 
-input {
-    border: none;
-    border-bottom: 1px solid #111111;
-}
+
 
 input:focus {
     outline: none;
     border-bottom-color: #007bff;
-    /* Change color to blue on focus */
 }
 .check{
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items:baseline;
+    gap: 10px;
 }
 .l{
     color: rgba(10, 67, 136, 0.773);

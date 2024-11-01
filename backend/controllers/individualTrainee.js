@@ -7,7 +7,7 @@ const registerToCourse = async (req, res, next) => {
   const { courseId, token } = req.body;
   const traineeId = req.id;
   try {
-    authorize(req.role, RESOURSES_NAMES.ITrainee, [ACTIONS_NAMES.UPDATE_OWN]);
+    authorize(req.role, RESOURSES_NAMES.ITrainee, [ACTIONS_NAMES.UPDATE_OWN],true);
     const updatedTrainee = await individualTraineeService.registerToCourse(
       traineeId,
       courseId,

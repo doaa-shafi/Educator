@@ -13,12 +13,15 @@ var cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth");
 const adminRoutes = require("./routes/admin");
 const corporateRoutes = require("./routes/corporate");
+const teamRoutes =require('./routes/team')
 const corporateTraineeRoutes = require("./routes/corporateTrainee");
 const individualTraineeRoutes = require("./routes/individualTrainee");
 const instructorRoutes = require("./routes/instructor");
 const courseRoutes = require("./routes/course");
+const categoryRoutes=require('./routes/category')
 const lessonRoutes = require("./routes/lesson");
 const enrollmentRoutes=require('./routes/enrollment')
+const paymentRoutes=require("./routes/payment")
 const errorHandler = require("./middlewares/errorHandler");
 
 //express app
@@ -44,16 +47,21 @@ app.use(
 );
 app.use("/docs/cv", express.static(path.join(__dirname, "/docs/cv")));
 
+app.use("/docs/instructors", express.static(path.join(__dirname, "/docs/instructors")));
+
 //routes
 app.use("/auth", authRoutes);
 app.use("/admins", adminRoutes);
 app.use("/corporates", corporateRoutes);
+app.use("/teams",teamRoutes)
 app.use("/corporateTrainees", corporateTraineeRoutes);
 app.use("/individualTrainees", individualTraineeRoutes);
 app.use("/instructors", instructorRoutes);
 app.use("/courses", courseRoutes);
+app.use("/categories",categoryRoutes)
 app.use("/lessons", lessonRoutes);
 app.use("/enrollments", enrollmentRoutes);
+app.use("/payments", paymentRoutes);
 
 app.all("*", (req, res, next) => {
   next(new ApiError(`${req.originalUrl} Not Found`));

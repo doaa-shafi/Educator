@@ -9,52 +9,47 @@ const {AuthenticationError, ConflictError}=require('../helpers/errors');
 
 class authService{
 
-  async login(username,password){
-    const foundUser = await User.findOne({ username }).exec();
+  async login(email,password){
+    const foundUser = await User.findOne({ email }).exec();
 
-    if (!foundUser) throw new AuthenticationError("username or password is incorrect");
+    if (!foundUser) throw new AuthenticationError("email or password is incorrect");
 
     const match = await bcrypt.compare(password, foundUser.password);
 
-    if (!match)  throw new AuthenticationError("username or password is incorrect");
+    if (!match)  throw new AuthenticationError("email or password is incorrect");
 
     const accessToken = generateAccessToken(
-      foundUser.username,
+      foundUser.email,
       foundUser._id,
-      foundUser.role
+      foundUser.__t,
     );
+    const refreshToken = generateRefreshToken(foundUser.email);
 
-    const refreshToken = generateRefreshToken(foundUser.username);
-
-    return { accessToken, refreshToken , role:foundUser.role};
+    return { accessToken, refreshToken , role:foundUser.__t};
   }
 
-  async signup(username, email, password){
-    const foundUsername = await User.findOne({ username }).exec();
+  async signup(firstName,lastName, email, password){
     const foundEmail = await User.findOne({ email }).exec();
-    
-    if(foundUsername) throw new ConflictError("Username is already taken");
-    
     if(foundEmail) throw new ConflictError("Email is already taken");
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
     const user = await IndividualTrainee.create({
-      username: username,
+      firstName: firstName,
+      lastName:lastName,
       email: email,
       password: hashedPassword,
-      role: "ITrainee",
     });
 
-    const accessToken = generateAccessToken(username, user._id, "ITrainee");
+    const accessToken = generateAccessToken(email, user._id, "IndividualTrainee");
 
-    const refreshToken = generateRefreshToken(username);
+    const refreshToken = generateRefreshToken(email);
 
-    return { accessToken, refreshToken ,role:foundUser.role};
+    return { accessToken, refreshToken ,role:"IndividualTrainee"};
   }
 
   async refresh(foundUser){
-    return generateAccessToken(foundUser.username,foundUser._id,foundUser.role);
+    return generateAccessToken(foundUser.email,foundUser._id,foundUser.__t);
   }
 }
 

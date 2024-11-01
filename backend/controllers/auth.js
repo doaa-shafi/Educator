@@ -1,6 +1,6 @@
 const User = require("../models/users/user");
 const jwt = require("jsonwebtoken");
-const { loginSchema, signupSchema } = require("../validatationSchemas/user");
+const {signupSchema } = require("../validatationSchemas/user");
 const authService = require("../services/auth");
 const {REFRESH_TOKEN_SECRET}=require('../config/configVariables')
 const {AuthenticationError,AuthorizationError}=require('../helpers/errors')
@@ -10,10 +10,10 @@ const validate=require('../helpers/validate')
 // @route POST /auth
 // @access Public
 const login = async (req, res, next) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
   try {
 
-    const { accessToken, refreshToken,role } = await authService.login(username,password);
+    const { accessToken, refreshToken,role } = await authService.login(email,password);
 
     // Create secure cookie with refresh token
     res.cookie("jwt", refreshToken, {
@@ -30,10 +30,10 @@ const login = async (req, res, next) => {
 };
 
 const signUp = async (req, res, next) => {
-  const { username, email, password, confirm_password } = req.body;
+  const { firstName ,lastName , email, password, confirm_password } = req.body;
   try {
-    validate(signupSchema,{  username: username,email: email,password: password,confirm_password: confirm_password})
-    const { accessToken, refreshToken } = await authService.signup(username,email,password);
+    validate(signupSchema,{  firstName: firstName,lastName:lastName,email: email,password: password,confirm_password: confirm_password})
+    const { accessToken, refreshToken } = await authService.signup(firstName,lastName,email,password);
 
     // Create secure cookie with refresh token
     res.cookie("jwt", refreshToken, {
@@ -66,7 +66,7 @@ const refresh = (req, res, next) => {
         if (err) next(new AuthenticationError('Invalid refresh token'))
   
         const foundUser = await User.findOne({
-          username: decoded.username,
+          email: decoded.email,
         }).exec();
   
         if (!foundUser) next(new AuthenticationError("Invalid refresh token"));

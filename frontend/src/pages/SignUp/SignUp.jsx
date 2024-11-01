@@ -1,11 +1,10 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import educator from '../../assets/Educator.png';
+import React ,{ useState, useEffect }from 'react'
+import { Link ,useNavigate} from 'react-router-dom';
+import logo from '../../assets/logo_white_2.png'
 import google from '../../assets/google.png'
 import facebook from '../../assets/facebook.png'
 import apple from '../../assets/apple.png'
-import axios from 'axios'
+import axios from '../../api/axios'
 import useAuth from '../../hooks/useAuth';
 import './SignUp.css'
 
@@ -13,10 +12,15 @@ import './SignUp.css'
 const SignUp = () => {
 
   const { setAuth } = useAuth();
+  const navigate=useNavigate()
 
-  const [username, setUsername] = useState("")
-  const [validName, setValidName] = useState(true)
-  const [errorName, setErrorName] = useState(true)
+  const [firstName, setFirstName] = useState("")
+  const [validFirstName, setValidFirstName] = useState(true)
+  const [errorFirstName, setErrorFirstName] = useState(true)
+
+  const [lastName, setLastName] = useState("")
+  const [validLastName, setValidLastName] = useState(true)
+  const [errorLastName, setErrorLastName] = useState(true)
 
   const [email, setEmail] = useState("")
   const [validEmail, setValidEmail] = useState(true)
@@ -40,14 +44,24 @@ const SignUp = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   useEffect(() => {
-    if ((username.length > 2 && username.length < 21) || username === "") {
-      setValidName(true)
+    if ((firstName.length > 2 && firstName.length < 21) || firstName === "") {
+      setValidFirstName(true)
     } else {
-      setValidName(false)
-      setErrorName("Username should contain 3-20 characters")
+      setValidFirstName(false)
+      setErrorFirstName("First name should contain 3-20 characters")
     }
     setError1(false)
-  }, [username])
+  }, [firstName])
+
+  useEffect(() => {
+    if ((lastName.length > 2 && lastName.length < 21) || lastName === "") {
+      setValidLastName(true)
+    } else {
+      setValidLastName(false)
+      setErrorLastName("Last name should contain 3-20 characters")
+    }
+    setError1(false)
+  }, [lastName])
 
   useEffect(() => {
     setValidEmail(emailRegex.test(email) || email === "");
@@ -72,16 +86,17 @@ const SignUp = () => {
   }
 
   const handleContinue = async () => {
-    if (username === "" || email === "") {
+    if (firstName === "" || lastName==="" || email === "") {
       setError1(true)
     }
-    if (validName && validEmail && username !== "" && email !== "") {
+    if (validFirstName && validLastName && validEmail && firstName !== "" && lastName !== "" && email !== "") {
       setPage(false);
     }
   }
 
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (e) => {
+    e.preventDefault()
 
     if (confirmPassword === "" || password === "") {
       setError2("Please enter all fields")
@@ -96,29 +111,21 @@ const SignUp = () => {
     }
     else {
       try {
-        const response = await axios.post('/auth/signup',
-          JSON.stringify({ username, email, password, confirm_password: confirmPassword }),
-          {
-            headers: { 'Content-Type': 'application/json' },
-            withCredentials: true
-          }
-        );
-        console.log(response?.data);
-        console.log(response?.accessToken);
-        console.log(JSON.stringify(response))
+        const response = await axios.post('/auth/signup',{ firstName, lastName, email, password, confirm_password: confirmPassword });
         const accessToken = response?.data?.accessToken;
         const role = response?.data?.role;
-        setAuth({ username, password, accessToken,role });
-
+        setAuth({ email, password, accessToken, role });
+        navigate("/sign-in")
       } catch (err) {
+        console.log(err)
         if (!err?.response) {
           setError2('No Server Response');
         }
         else {
           const error = err.response.data.error
-          if (error === "Username is already taken") {
-            setErrorName(error)
-            setValidName(false)
+          if (error === "Enter a valid first name" || error === "Enter a valid last name") {
+            setErrorFirstName(error)
+            setValidFirstName(false)
             setPage(true)
           } else if (error === "Email is already taken" || error === "Enter a valid email") {
             setErrorEmail(error)
@@ -134,11 +141,11 @@ const SignUp = () => {
 
 
   return (
-    <div className="container">
-      <img className='image' src={educator} alt="Norway"></img>
+    <div className="login-container">
+      <img className='login-logo' src={logo} alt="" />
       <div>
-        {page ? <div className="card">
-          <div>Step 1 of 2</div>
+        {page ? <form action='submit' className="login-card">
+          <h4>Step 1 of 2</h4>
           <div className='title'>Create an account</div>
           <div className="sign-up-options">
             <div className="sign-up-option">
@@ -156,38 +163,43 @@ const SignUp = () => {
             <span>Or</span>
             <hr />
           </div>
-          <div>Sing up with email</div>
-          <div>Already have an account? <Link className='l' to='/login'>Sign in</Link></div>
+          <h4>Sing up with email</h4>
+          <h5>Already have an account? <Link className='l' to='/sign-in'>Sign in</Link></h5>
           <div className='inputs'>
             <div className="input">
-              <label className="label1">Email</label>
-              <input  type='email' onChange={(e) => setEmail(e.target.value)} value={email} />
-              {validEmail === false && <div className='error'><p>{errorEmail}</p></div>}
+              <label className="label1">First name</label>
+              <input type='text' onChange={(e) => setFirstName(e.target.value)} value={firstName} />
+              {validFirstName === false && <div className='error'><p>{errorFirstName}</p></div>}
             </div>
             <div className="input">
-              <label className="label1">Username</label>
-              <input type='text' onChange={(e) => setUsername(e.target.value)} value={username} />
-              {validName === false && <div className='error'><p>{errorName}</p></div>}
+              <label className="label1">Last name</label>
+              <input type='text' onChange={(e) => setLastName(e.target.value)} value={lastName} />
+              {validLastName === false && <div className='error'><p>{errorLastName}</p></div>}
+            </div>
+            <div className="input">
+              <label className="label1">Email</label>
+              <input type='email' onChange={(e) => setEmail(e.target.value)} value={email} />
+              {validEmail === false && <div className='error'><p>{errorEmail}</p></div>}
             </div>
           </div>
           {error1 === true && <div className='error'><p>Please enter all fields</p></div>}
-          <button className='contin' onClick={handleContinue}>Continue</button>
-        </div>
+          <button type='submit' className='contin' onClick={handleContinue}>Continue</button>
+        </form>
           :
-          <div className="card">
-            <div>Step 2 of 2</div>
+          <form action='submit' className="login-card">
+            <h4>Step 2 of 2</h4>
             <div className='title'>Create an account</div>
-            <div>Sing up with email</div>
-            <div>Already have an account? <Link className='l' to='/login'>Sign in</Link></div>
+            <h4>Sing up with email</h4>
+            <h5>Already have an account? <Link className='l' to='/login'>Sign in</Link></h5>
             <div className='inputs'>
               <div className="input">
                 <label className="label1">Password</label>
-                <input  type='password' onChange={(e) => setPassword(e.target.value)} value={password} />
+                <input type='password' onChange={(e) => setPassword(e.target.value)} value={password} />
                 {validPwd === false && <p>hh</p>}
               </div>
               <div className="input">
                 <label className="label1">Confirm Password</label>
-                <input  type='password' onChange={(e) => setConfirmPassword(e.target.value)} value={confirmPassword} />
+                <input type='password' onChange={(e) => setConfirmPassword(e.target.value)} value={confirmPassword} />
                 {validMatch === false && <p>jj</p>}
               </div>
 
@@ -203,9 +215,9 @@ const SignUp = () => {
             </div>
             <div className='buttons'>
               <button className='back' onClick={() => { setPage(true) }}>Back</button>
-              <button className='contin' onClick={handleSignUp}>Create</button>
+              <button type='submit' className='contin' onClick={handleSignUp}>Create</button>
             </div>
-          </div>}
+          </form>}
       </div>
 
 

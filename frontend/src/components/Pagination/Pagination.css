@@ -1,0 +1,21 @@
+.pagination-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.pagination-container button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.pagination-container .active {
+    font-weight: bold;
+}
+
+.pagination-container .pagination-dots {
+    padding: 0 0.5rem;
+}

@@ -2,7 +2,7 @@ const Joi = require("joi");
 const { isValidVideoLink } = require("../helpers/videoHelpers");
 
 const createLessonSchema = Joi.object({
-  title: Joi.string().alphanum().min(3).max(30).required().messages({
+  title: Joi.string().max(30).required().messages({
     "string.base": `Course title should be a type of 'text'`,
     "string.empty": `Course title cannot be empty`,
     "string.min": `Course title should have a minimum length of {#limit}`,
@@ -12,35 +12,35 @@ const createLessonSchema = Joi.object({
 });
 
 const quizSchema = Joi.object({
-  question: Joi.string().alphanum().min(3).max(30).required().messages({
+  question: Joi.string().required().messages({
     "string.base": `Question should be a type of 'text'`,
     "string.empty": `Question cannot be empty`,
     "string.min": `Question should have a minimum length of {#limit}`,
     "string.max": `Question should have a maximum length of {#limit}`,
     "any.required": `Question is required`,
   }),
-  choiceA: Joi.string().alphanum().min(3).max(30).required().messages({
+  choiceA: Joi.string().required().messages({
     "string.base": `Choice should be a type of 'text'`,
     "string.empty": `Choice cannot be empty`,
     "string.min": `Choice should have a minimum length of {#limit}`,
     "string.max": `Choice should have a maximum length of {#limit}`,
     "any.required": `Choice is required`,
   }),
-  choiceB: Joi.string().alphanum().min(3).max(30).required().messages({
+  choiceB: Joi.string().required().messages({
     "string.base": `Choice should be a type of 'text'`,
     "string.empty": `Choice cannot be empty`,
     "string.min": `Choice should have a minimum length of {#limit}`,
     "string.max": `Choice should have a maximum length of {#limit}`,
     "any.required": `Choice is required`,
   }),
-  choiceC: Joi.string().alphanum().min(3).max(30).required().messages({
+  choiceC: Joi.string().required().messages({
     "string.base": `Choice should be a type of 'text'`,
     "string.empty": `Choice cannot be empty`,
     "string.min": `Choice should have a minimum length of {#limit}`,
     "string.max": `Choice should have a maximum length of {#limit}`,
     "any.required": `Choice is required`,
   }),
-  choiceD: Joi.string().alphanum().min(3).max(30).required().messages({
+  choiceD: Joi.string().required().messages({
     "string.base": `Choice should be a type of 'text'`,
     "string.empty": `Choice cannot be empty`,
     "string.min": `Choice should have a minimum length of {#limit}`,
@@ -53,7 +53,7 @@ const quizSchema = Joi.object({
     "any.invalid": `There is no choice like this`,
     "any.required": `answer is required`,
   }),
-  comment: Joi.string().alphanum().min(3).max(30).required().messages({
+  comment: Joi.string().required().messages({
     "string.base": `Answer explanation should be a type of 'text'`,
     "string.empty": `Answer explanation cannot be empty`,
     "string.min": `Answer explanation should have a minimum length of {#limit}`,

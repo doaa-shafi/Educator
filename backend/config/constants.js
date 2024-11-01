@@ -1,10 +1,10 @@
-const RESOURSES_NAMES_ENUM=['instructor','ITrainee','CTrainee','corporate','admin','course_full','course_info',
+const RESOURSES_NAMES_ENUM=['Instructor','IndividualTrainee','CorporateTrainee','Corporate','admin','course_full','course_info',
                             'program','lesson']
 
 const RESOURSES_NAMES={
     Instructor:RESOURSES_NAMES_ENUM[0],
     ITrainee:RESOURSES_NAMES_ENUM[1],
-    CrTainee:RESOURSES_NAMES_ENUM[2],
+    CTrainee:RESOURSES_NAMES_ENUM[2],
     Corporate:RESOURSES_NAMES_ENUM[3],
     Admin:RESOURSES_NAMES_ENUM[4],
     Course_full:RESOURSES_NAMES_ENUM[5],

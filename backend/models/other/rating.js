@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 
 const ratingSchema = mongoose.Schema({
+    reviewerName:{
+        type:String,
+    },
     rating:{
         type:Number,
         required: true,

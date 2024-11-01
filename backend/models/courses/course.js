@@ -23,13 +23,12 @@ const courseSchema = new Schema ({
     previewVideo: {
         type: String,
     },
+    thumbnail:{
+        type:String,
+    },
     instructor: {
         type: mongoose.Types.ObjectId,
         ref:'Instructor',
-    },
-    totalMins: {
-        type: Number,
-        default:0
     },
     price: {
         type: Number,
@@ -62,20 +61,13 @@ const courseSchema = new Schema ({
         ref: "Rating", 
         default: [] 
     }],     
-    skills: [{ 
-        type: String,
-        default: [],
-        validate: [arrayLimit, 'skills exceed the limit of 10'] 
-    }], 
     learnings: [{ 
         type: String,
         default: [],
-        validate: [arrayLimit, 'skills exceed the limit of 10']
     }], 
     requirements: [{ 
         type: String,
         default: [],
-        validate: [arrayLimit, 'skills exceed the limit of 10']
     }],   
     level:{
         type:String,
@@ -90,10 +82,15 @@ const courseSchema = new Schema ({
     }
 }, {timestamps: true})
 
-courseSchema.virtual("thumbnail").get(function () {
-    return getVideoThumbnailUrl(this.previewVideo);
+courseSchema.pre('save', function (next) {
+    if (!this.thumbnail && this.previewVideo) {
+        const generatedThumbnail = getVideoThumbnailUrl(this.previewVideo);
+        console.log("Generated Thumbnail URL:", generatedThumbnail); // Debugging
+        this.thumbnail = generatedThumbnail; // Store the thumbnail
+    }
+    next();
 });
-courseSchema.plugin(uniqueValidator, { message: "is already taken." });
+
 courseSchema.plugin(mongoose_fuzzy_searching, {
     fields: [
         {
@@ -101,14 +98,7 @@ courseSchema.plugin(mongoose_fuzzy_searching, {
             minSize: 3,
             prefixOnly: true
         },
-        {
-            name: "subject",
-            minSize: 3,
-            prefixOnly: true
-        }
     ]
 });
-function arrayLimit(val) {
-    return val.length <= 10;
-}
+
 module.exports = mongoose.model('Course', courseSchema) 

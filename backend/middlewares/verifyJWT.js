@@ -15,7 +15,7 @@ const verifyJWT = (req, res, next) => {
         ACCESS_TOKEN_SECRET,
         (err, decoded) => {
             if (err) next (new AuthenticationError('Invalid or expired access token'))
-            req.user = decoded.UserInfo.username
+            req.user = decoded.UserInfo.email
             req.id = decoded.UserInfo.id
             req.role = decoded.UserInfo.role
             next()

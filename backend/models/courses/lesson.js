@@ -57,18 +57,9 @@ const lessonSchema = new Schema(
         },
         comment: {
           type: String,
-          required: true,
         },
       },
     ],
-    status:{
-      type:String,
-      default:'draft',
-      enum: {
-          values: ['draft', 'published','closed'],
-          message: '{VALUE} is not supported'
-        }
-    }
   },
   { timestamps: true }
 );

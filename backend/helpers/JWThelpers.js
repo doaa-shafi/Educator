@@ -1,11 +1,11 @@
 const jwt = require("jsonwebtoken");
 const {ACCESS_TOKEN_SECRET,REFRESH_TOKEN_SECRET}=require('../config/configVariables')
 
-const generateAccessToken=(username,id,role)=>{
+const generateAccessToken=(email,id,role)=>{
     const accessToken = jwt.sign(
         {
           UserInfo: {
-            username: username,
+            email: email,
             id: id,
             role: role,
           },
@@ -16,9 +16,9 @@ const generateAccessToken=(username,id,role)=>{
     return accessToken
 }
 
-const generateRefreshToken=(username)=>{
+const generateRefreshToken=(email)=>{
     const refreshToken = jwt.sign(
-        { username: username },
+        { email: email },
         REFRESH_TOKEN_SECRET,
         { expiresIn: "7d" }
       );

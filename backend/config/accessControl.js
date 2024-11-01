@@ -2,26 +2,26 @@ const AccessControl = require('accesscontrol');
 
 const ac = new AccessControl();
 
-ac.grant('ITrainee')
-    .readOwn('ITrainee')
-    .updateOwn('ITrainee')
-    .deleteOwn('ITrainee')
+ac.grant('IndividualTrainee')
+    .readOwn('IndividualTrainee')
+    .updateOwn('IndividualTrainee')
+    .deleteOwn('IndividualTrainee')
     .readAny('course_info')
     .readOwn('course_full')
     .readOwn('lesson');
 
-ac.grant('CTrainee')
-    .readOwn('CTrainee')
-    .updateOwn('CTrainee')
-    .deleteOwn('CTrainee');
+ac.grant('CorporateTrainee')
+    .readOwn('CorporateTrainee')
+    .updateOwn('CorporateTrainee')
+    .deleteOwn('CorporateTrainee');
 
-ac.grant('corporate')
-    .readOwn('corporate')
-    .updateOwn('corporate')
-    .deleteOwn('corporate')
-    .createOwn('CTrainee')
-    .readOwn('CTrainee')
-    .deleteOwn('CTrainee');
+ac.grant('Corporate')
+    .readOwn('Corporate')
+    .updateOwn('Corporate')
+    .deleteOwn('Corporate')
+    .createAny('CorporateTrainee')
+    .readOwn('CorporateTrainee')
+    .deleteOwn('CorporateTrainee');
 
 ac.grant('admin')
     .createAny('admin')
@@ -29,14 +29,14 @@ ac.grant('admin')
     .createAny('instructor')
     .readAny('instructor')
     .deleteAny('instructor')
-    .createAny('corporate')
-    .readAny('corporate')
-    .deleteAny('corporate');
+    .createAny('Corporate')
+    .readAny('Corporate')
+    .deleteAny('Corporate');
 
-ac.grant('instructor')
-    .readOwn('instructor')
-    .updateOwn('instructor')
-    .deleteOwn('instructor')
+ac.grant('Instructor')
+    .readOwn('Instructor')
+    .updateOwn('Instructor')
+    .deleteOwn('Instructor')
     .createAny('course_full')
     .readOwn('course_full')
     .updateOwn('course_full')

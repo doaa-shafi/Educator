@@ -10,7 +10,7 @@ const { ValidationError } = require("../helpers/errors");
 const getCourseLessons=async(req,res,next)=>{
   const courseId = req.query.courseId;
   try {
-    authorize(req.role,RESOURSES_NAMES.Lesson,[ACTIONS_NAMES.READ_OWN])
+    authorize(req.role,RESOURSES_NAMES.Lesson,[ACTIONS_NAMES.READ_OWN],true)
     validate(idSchema,{id:courseId})
     const lessons=await lessonService.getCourseLessons(courseId)
     res.status(200).json(lessons);
@@ -34,7 +34,7 @@ const getCourseLessonsInfo=async(req,res,next)=>{
 const getLesson = async (req, res,next) => {
   const  id  = req.params.id;
   try {
-    authorize(req.role,RESOURSES_NAMES.Lesson,[ACTIONS_NAMES.READ_OWN])
+    authorize(req.role,RESOURSES_NAMES.Lesson,[ACTIONS_NAMES.READ_OWN],true)
     validate(idSchema,{id:id})
     const lesson=await lessonService.getLesson(id)
     res.status(200).json(lesson);
@@ -64,14 +64,27 @@ const createLesson = async (req, res,next) => {
   }   
 };
 const addQuiz = async (req, res,next) => {
-  const { course_id,lesson_id, exercises } = req.body;
+  const { course_id,lesson_id, exercise } = req.body;
   const instructor=req.id
   try {
     authorize(req.role,RESOURSES_NAMES.Lesson,[ACTIONS_NAMES.UPDATE_OWN],true)// condition to be performed later in the service
     validate(idSchema,{id:course_id})
     validate(idSchema,{id:lesson_id})
-    const lesson=await lessonService.addQuiz(course_id,lesson_id,exercises,instructor)
+    validate(quizSchema,exercise)
+    const lesson=await lessonService.addQuiz(course_id,lesson_id,exercise,instructor)
     res.status(201).json(lesson);
+  } catch (error) {
+    next(error)
+  }  
+}
+
+const deleteQuizQuestion = async (req, res,next) => {
+  const { lessonId, qIndex } = req.body;
+  const instructor=req.id
+  try {
+    authorize(req.role,RESOURSES_NAMES.Lesson,[ACTIONS_NAMES.UPDATE_OWN],true)// condition to be performed later in the service
+    const lesson=await lessonService.deleteQuizQuestion(instructor,lessonId,qIndex)
+    res.status(201).json({ message: 'Item deleted successfully', lesson });
   } catch (error) {
     next(error)
   }  
@@ -104,12 +117,25 @@ const addLecture = async (req, res,next) => {
     validate(idSchema,{id:course_id})
     validate(idSchema,{id:lesson_id})
     const lesson=await lessonService.addLecture(course_id,lesson_id, title, duration,instructor,req.file)
-    res.status(201).json({ message: 'Lecture uploaded successfully', lesson });
+    res.status(201).json(lesson );
   } catch (error) {
     next(error)
   }
   
 }
+const deleteItem = async (req, res,next) => {
+  try {
+    const {lessonId, itemIndex, itemTitle } = req.body;
+    const instructor=req.id
+    authorize(req.role,RESOURSES_NAMES.Lesson,[ACTIONS_NAMES.UPDATE_OWN],true)// condition to be performed later in the service
+    const lesson=await lessonService.deleteItem(instructor,lessonId, itemIndex, itemTitle)
+    res.status(201).json({ message: 'Item deleted successfully', lesson });
+  } catch (error) {
+    next(error)
+  }
+  
+}
+
 
 
 
@@ -121,6 +147,8 @@ module.exports = {
   getQuizAnswers,
   createLesson,
   addQuiz,
+  deleteQuizQuestion,
   addVideo,
   addLecture,
+  deleteItem,
 }

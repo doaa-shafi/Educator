@@ -3,50 +3,11 @@
   height: 90vh;
 }
 
-.topbar {
-  height: 6.5vh;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0px 3rem 0px 3rem;
-  color: white;
-  background: rgb(2, 0, 36);
-  background: linear-gradient(90deg, rgb(5, 1, 75) 0%, rgb(38, 90, 133) 100%);
-}
-.topbar .left{
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
-.topbar-title{
-font-size: 2rem;
-}
-.topbar .right{
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
-
-.sidebar {
-  width: 25%;
-  background-color: #f9f9f9;
-  /* Light background */
-  padding: 20px;
-  border-right: 1px solid #ddd;
-  /* Add a border for separation */
-  overflow-y: auto;
-}
-
-.lesson {
-  margin-bottom: 10px;
-}
-
 .lesson-title {
   font-size: 1.2rem;
   margin-bottom: 0px;
   cursor: pointer;
   color: #333;
-  /* Darker text for visibility */
   padding: 10px;
   background-color: rgba(128, 128, 128, 0.096);
   border-bottom: 1px solid rgba(128, 128, 128, 0.237);
@@ -56,31 +17,32 @@ font-size: 2rem;
 }
 
 .lesson-title:hover {
-  background-color: #d0d0d0;
+  background-color: #f0f0f0;
 }
 
 .items-list {
   padding-left: 20px;
-  margin-top: 0px;
-  margin-bottom: 10px;
+  padding-top: 20px;
   background-color: rgba(128, 128, 128, 0.048);
 }
 
-.item {
+.lessons-nav-item {
   cursor: pointer;
   margin-bottom: 5px;
-  padding: 5px 10px;
+  padding: 0px 20px;
   border-radius: 4px;
 }
 
-.item:hover {
+.lessons-nav-item:hover {
   background-color: #f0f0f0;
 }
 
 .quiz-link {
   cursor: pointer;
-  color: #d9534f;
-  font-weight: bold;
+  color: #4da7cc;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 18px;
   margin-top: 10px;
   padding: 5px 10px;
   border-radius: 4px;
@@ -94,15 +56,13 @@ font-size: 2rem;
 .content-display {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  width: 100%;
+  height: 80vh;
 }
 
 .content-window {
   flex-grow: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
   background-color: #f9f9f9;
 }
 
@@ -114,20 +74,22 @@ font-size: 2rem;
   /* Ensure video scales appropriately */
 }
 
-.tabs {
+.study-tabs {
   display: flex;
-  justify-content: space-around;
-  background-color: #f1f1f1;
+ justify-content: space-around;
   padding: 10px 0;
 }
 
 .tab-button {
   padding: 10px 20px;
   border: none;
-  background-color: #007bff;
+  background-color: #4da7cc;
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
 }
 
 .tab-button:hover {
@@ -140,7 +102,7 @@ font-size: 2rem;
 }
 
 .quiz-container {
-  padding: 20px;
+  padding: 70px 0px;
   background-color: #f9f9f9;
 }
 
@@ -153,7 +115,8 @@ font-size: 2rem;
 }
 
 .quiz-option {
-  display: block;
+  display: flex;
+  gap: 10px;
   margin-bottom: 5px;
 }
 

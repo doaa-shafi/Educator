@@ -1,10 +1,13 @@
 const mongoose = require('mongoose')
 
 const userSchema = mongoose.Schema({
-    username:{
+    firstName:{
         type:String,
         required: true,
-        unique:true
+    },
+    lastName:{
+        type:String,
+        required: true,
     },
     email:{
         type:String,
@@ -19,13 +22,6 @@ const userSchema = mongoose.Schema({
         type:String,
         default:"United States"
     },
-    role:{
-        type:String,
-        enum: {
-            values: ['ITrainee', 'CTrainee','instructor','admin','corporate'],
-            message: '{VALUE} is not supported'
-        }
-    }
 },{timestamps: true})
 
 module.exports = mongoose.model('User', userSchema)

@@ -2,13 +2,17 @@ const mongoose = require("mongoose");
 
 const paymentSchema = mongoose.Schema(
   {
-    userId: {
+    payerId: {
         type: mongoose.Types.ObjectId,
-        ref: "user",
+        ref: "User",
+    },
+    receiverId: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
     },
     courseId: {
         type: mongoose.Types.ObjectId,
-        ref: "course",
+        ref: "Course",
     },
     amount: {
         type:Number

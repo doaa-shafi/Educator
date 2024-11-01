@@ -1,5 +1,4 @@
 const enrollmentService=require('../services/enrollment')
-const {addUserSchema}=require("../validatationSchemas/user")
 const {idSchema,page_limitSchema}=require('../validatationSchemas/id,page,limit')
 const validate=require('../helpers/validate');
 const authorize = require("../helpers/authorize");
@@ -43,7 +42,8 @@ const submitQuiz = async (req, res,next) => {
 };
 const getTraineeEnrollment=async(req,res,next)=>{
   const traineeId=req.id
-  const {courseId}=req.query
+  const courseId=req.params.id
+  console.log("here")
   try {
     const enrollment=await enrollmentService.getTraineeEnrollment(traineeId,courseId)
     return res.status(200).json(enrollment);

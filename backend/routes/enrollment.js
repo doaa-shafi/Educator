@@ -6,8 +6,8 @@ const router = express.Router();
 
 router.post("/", verifyJWT, addEnrollment);
 router.patch("/", verifyJWT, updateProgress);
-router.get('/',verifyJWT,getTraineeEnrollment)
 router.get('/about',verifyJWT,getTraineeEnrollmentsInfo)
+router.get('/:id',verifyJWT,getTraineeEnrollment)
 router.patch('/submit-quiz',verifyJWT, submitQuiz);
 
 module.exports = router;
