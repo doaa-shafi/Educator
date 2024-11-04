@@ -13,7 +13,6 @@ var cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth");
 const adminRoutes = require("./routes/admin");
 const corporateRoutes = require("./routes/corporate");
-const teamRoutes =require('./routes/team')
 const corporateTraineeRoutes = require("./routes/corporateTrainee");
 const individualTraineeRoutes = require("./routes/individualTrainee");
 const instructorRoutes = require("./routes/instructor");
@@ -53,7 +52,6 @@ app.use("/docs/instructors", express.static(path.join(__dirname, "/docs/instruct
 app.use("/auth", authRoutes);
 app.use("/admins", adminRoutes);
 app.use("/corporates", corporateRoutes);
-app.use("/teams",teamRoutes)
 app.use("/corporateTrainees", corporateTraineeRoutes);
 app.use("/individualTrainees", individualTraineeRoutes);
 app.use("/instructors", instructorRoutes);

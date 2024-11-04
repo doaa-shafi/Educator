@@ -89,6 +89,16 @@ const getCourse= async (req, res,next) => {
     next(error)
   }  
 };
+const getCalculatedPrice=async(req,res,next)=>{
+  const {courseId,totalEnrollments}=req.query
+  console.log(courseId,totalEnrollments)
+  try {
+    const price=await courseService.getCalculatedPrice(courseId,totalEnrollments)
+    res.status(200).json(price)
+  } catch (error) {
+    next(error)
+  }
+}
 const createCourse = async (req, res,next) => {
   const {title} = req.body;
   const instructor=req.id
@@ -171,6 +181,7 @@ module.exports = {
   getPopulerCoursesInfo,
   getDraftCourses,
   getDraftCourse,
+  getCalculatedPrice,
   createCourse,
   updateCourse,
   getCoursesInfo,

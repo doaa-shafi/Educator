@@ -4,6 +4,7 @@ const {
   getPopulerCoursesInfo,
   getCourse,
   getCourseInfo,
+  getCalculatedPrice,
   createCourse,
   updateCourse,
   getDraftCourses,
@@ -24,7 +25,10 @@ router.get("/draft",verifyJWT,getDraftCourses)
 router.get("/draft/:id",verifyJWT,getDraftCourse)
 router.get("/closed",verifyJWT,getClosedCourses)
 router.get("/about/:id", getCourseInfo);
+router.get("/price",verifyJWT,getCalculatedPrice)
+
 router.get("/:id", getCourse);
+
 router.post("/",verifyJWT,createCourse);
 router.patch("/publish",verifyJWT, publishCourse);
 router.patch("/:id",verifyJWT,updateCourse)

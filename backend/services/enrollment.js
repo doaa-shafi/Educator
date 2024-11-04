@@ -1,6 +1,7 @@
 const Enrollment = require("../models/courses/enrollment");
 const Lesson = require("../models/courses/lesson");
 const lessonService = require("./lesson");
+const dayjs = require('dayjs');
 
 class enrollmentService {
   async addEnrollment(trainee, course, session) {
@@ -172,17 +173,55 @@ class enrollmentService {
     await Enrollment.countDocuments({ trainee: traineeId });
   }
 
-  async removeEnrollmentsByTrainee(traineeId, session) {
-    return await Enrollment.deleteMany({ trainee: traineeId }).session(session);
+  async removeEnrollmentsByTrainee(traineeId, type, session) {
+    if (type !== "c") {
+      return await Enrollment.deleteMany({ trainee: traineeId }).session(
+        session
+      );
+    }
+
+    const enrollments = await Enrollment.find({ trainee: traineeId }).session(
+      session
+    );
+    const courseUpdates = {}; // To keep track of courses to decrement currentEnrollments for
+
+    for (const enrollment of enrollments) {
+      const courseId = enrollment.course;
+      const createdAt = dayjs(enrollment.createdAt);
+      const currentDate = dayjs();
+      const daysSinceCreation = currentDate.diff(createdAt, "day");
+
+      const progress =
+        (enrollment.completedDuration / enrollment.totalDuration) * 100;
+
+      // Only decrement `currentEnrollments` if progress is 15% or less and created within the last 10 days
+      if (progress <= 15 && daysSinceCreation <= 10) {
+        if (!courseUpdates[courseId]) {
+          courseUpdates[courseId] = 0;
+        }
+        courseUpdates[courseId] -= 1; // Decrement for each valid enrollment
+      }
+    }
+
+    await Enrollment.deleteMany({ trainee: traineeId }).session(session);
+
+    // Update `currentEnrollments` for each course that needs decrementing
+    for (const [courseId, decrement] of Object.entries(courseUpdates)) {
+      await Corporate.updateOne(
+        { "courses.id": courseId },
+        { $inc: { "courses.$.currentEnrollments": decrement } },
+        { session }
+      );
+    }
   }
 
-  async removeEnrollmentByTraineeAndCourse(traineeId, courseId,session) {
+  async removeEnrollmentByTraineeAndCourse(traineeId, courseId, session) {
     return await Enrollment.findOneAndDelete(
       {
         trainee: traineeId,
         course: courseId,
       },
-      { session } 
+      { session }
     );
   }
   async removeEnrollmentsByTraineesAndCourse(traineeIds, courseId, session) {

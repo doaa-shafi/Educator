@@ -68,6 +68,11 @@ class courseService {
     return await Course.findById(id);
   }
 
+  async getCalculatedPrice(courseId,totalEnrollments){
+    const course=await Course.findById(courseId)
+    return course.price*totalEnrollments
+  }
+
   async createCourse(title, instructor) {
     return await Course.create({
       title: title,

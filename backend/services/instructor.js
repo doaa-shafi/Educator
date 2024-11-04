@@ -107,6 +107,9 @@ class instructorService {
   async getInstructor(id) {
     return await Instructor.findById(id);
   }
+  async getInstructorWallet(id){
+    return await Instructor.findById(id).select({wallet:1})
+  }
   async updateInstructor(instructorId, updateData) {
     return await Instructor.findByIdAndUpdate(instructorId, updateData, {
       new: true,

@@ -15,10 +15,16 @@ import CheckIcon from '@mui/icons-material/Check';
 import AllInclusiveIcon from '@mui/icons-material/AllInclusive';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 
+import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+
 import StripeCheckout from "react-stripe-checkout"
 
 
 const Enterprise = () => {
+    const stripe = useStripe();
+    const elements = useElements();
+    const [isProcessing, setIsProcessing] = useState(false);
+
     const { auth, setAuth } = useAuth();
     const navigate = useNavigate();
 
@@ -54,7 +60,6 @@ const Enterprise = () => {
     const [confirmPassword, setConfirmPassword] = useState("")
     const [validMatch, setValidMatch] = useState(true)
 
-    const [country, setCountry] = useState("")
     const [agree, setAgree] = useState(false)
 
     const [error, setError] = useState("")
@@ -93,6 +98,61 @@ const Enterprise = () => {
         setAgree(!agree);
 
     }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsProcessing(true);
+
+        if (!stripe || !elements) {
+            setError("Stripe is not loaded");
+            setIsProcessing(false);
+            return;
+        }
+
+        const cardElement = elements.getElement(CardElement);
+
+        // Create a PaymentMethod
+        const { paymentMethod, error: paymentError } = await stripe.createPaymentMethod({
+            type: 'card',
+            card: cardElement,
+        });
+
+        if (paymentError) {
+            setError(paymentError.message);
+            setIsProcessing(false);
+            return;
+        }
+
+        // Send the details to the backend to create the subscription
+        try {
+            const response = await axios.post('/corporates/', {
+                username,
+                email,
+                password,
+                confirm_password: confirmPassword,
+                plan,
+                paymentMethodId: paymentMethod.id, // Stripe token to be passed to the backend
+            });
+
+            const { clientSecret, corporate } = response.data;
+
+            // Confirm the payment with the client secret
+            const { error: confirmError } = await stripe.confirmCardPayment(clientSecret);
+
+            if (confirmError) {
+                setError(confirmError.message);
+                setIsProcessing(false);
+                return;
+            }
+
+            alert('Subscription successful!');
+            setError(null);
+        } catch (error) {
+            setError(error.response?.data?.error || "An error occurred");
+        }
+
+        setIsProcessing(false);
+    };
+
     const handleToken = async (token) => {
         // When Stripe sends back the token, you proceed with creating the corporate
 
@@ -195,6 +255,43 @@ const Enterprise = () => {
             >
                 <div className="preview-content">
                     <h3>{plan} Plan Registration</h3>
+                    <form onSubmit={handleSubmit}>
+                        <h3>Subscribe to a Plan</h3>
+                        <input
+                            type="text"
+                            placeholder="Username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                        <input
+                            type="password"
+                            placeholder="Confirm Password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                        />
+                        
+                        <CardElement options={{ hidePostalCode: true }} />
+                        {error && <p style={{ color: 'red' }}>{error}</p>}
+                        <button type="submit" disabled={!stripe || isProcessing}>
+                            {isProcessing ? 'Processing...' : 'Subscribe'}
+                        </button>
+                    </form>
                     <form action="submit">
                         <div className="input">
                             <label className="label1">Corporate name</label>
@@ -351,7 +448,7 @@ const Enterprise = () => {
                                         <p>Empower Your Workforce with Customized Training Solutions.
                                             <br /> Unlock employee potential with a platform designed for growth, innovation, and success. </p>
                                     </div>
-                                    <a class="btn-01" onClick={() => handleStartNowClick('pricing-plans')}>Start now</a>
+                                    <a class="btn-07" onClick={() => handleStartNowClick('pricing-plans')}>Start now</a>
                                     <a href="#" class="btn-03">Learn more</a>
                                 </div>
                             </div>

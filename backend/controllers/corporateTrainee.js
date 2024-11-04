@@ -42,6 +42,16 @@ const removeCorporateTrainee = async (req, res,next) => {
     next(error)
   }  
 };
+const getTraineesEmailsAndIdsByCorporate=async(req,res,next)=>{
+  const corporateId=req.id
+  try {
+    authorize(req.role,RESOURSES_NAMES.CTrainee,[ACTIONS_NAMES.READ_OWN],true) // true as getting trainees is by corporateId
+    const trainees = await corporateTraineeService.getTraineesEmailsAndIdsByCorporate(corporateId);
+    res.status(200).json(trainees);
+  } catch (error) {
+    next(error)
+  }  
+}
 const getTraineesByCorporate = async (req, res,next) => {
   const corporateId=req.id
   try {
@@ -52,12 +62,12 @@ const getTraineesByCorporate = async (req, res,next) => {
     next(error)
   }  
 };
-const assignCourseToTrainee=async (req, res)=> {
+const assignCoursesToTrainees=async (req, res)=> {
   const corporateId=req.id
-  const {traineeId,courseId}=req.body
+  const {traineesIds,coursesIds}=req.body
   try {
-      const result = await corporateTraineeService.assignCourseToTrainee(corporateId,traineeId,courseId);
-      res.status(200).json(result);
+      const corporate = await corporateTraineeService.assignCoursesToTrainees(corporateId,traineesIds,coursesIds);
+      res.status(200).json(corporate);
   } catch (err) {
       res.status(400).json({ error: err.message });
   }
@@ -77,7 +87,8 @@ module.exports = {
   getCorporateTrainee,
   addCorporateTrainee,
   removeCorporateTrainee,
+  getTraineesEmailsAndIdsByCorporate,
   getTraineesByCorporate,
-  assignCourseToTrainee,
+  assignCoursesToTrainees,
   removeCourseFromTrainee,
 };

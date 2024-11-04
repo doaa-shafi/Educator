@@ -1067,6 +1067,22 @@ pre code {
 	border: 1px solid #e1e3e7;
 	border-radius: 0.3rem;
 }
+.dashboard-card-02 {
+	padding: 30px;
+	width: auto;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-ms-flex-direction: column;
+	flex-direction: column;
+	min-width: 0;
+	word-wrap: break-word;
+	background-color: white;
+	background-clip: border-box;
+	/* border: 1px solid #e1e3e7; */
+	box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+	border-radius: 0.3rem;
+}
 
 .no-data {
 	display: flex;
@@ -7802,6 +7818,36 @@ ol li::before {
 	cursor: not-allowed !important;
 
 }
+
+.btn-07 {
+	font-size: 14px;
+	line-height: 16px;
+	color: #fff;
+	text-transform: uppercase;
+	background-color: #a0ce4e;
+	border: 1px solid #a0ce4e;
+	padding: 17px 38px;
+	-webkit-border-radius: 25px;
+	border-radius: 25px;
+	-webkit-transition: 0.5s all;
+	transition: 0.5s all;
+	letter-spacing: 1px;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.btn-07:focus {
+	color: #fff;
+}
+
+.btn-07:hover {
+	border: 1px solid #fff;
+	background-color: transparent;
+	-webkit-transition: 0.5s all;
+	transition: 0.5s all;
+	color: #fff;
+}
+
 
 
 
@@ -15803,6 +15849,21 @@ hr {
 
 .average-review h2 {
 	font-size: 70px;
+	line-height: 26px;
+	font-weight: 700;
+	font-family: 'Roboto Slab', serif;
+	color: #ffc722;
+	margin-bottom: 32px;
+}
+.amount-01{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 35px 30px 39px 30px;
+	text-align: center;
+}
+.amount-01 h2 {
+	font-size: 60px;
 	line-height: 26px;
 	font-weight: 700;
 	font-family: 'Roboto Slab', serif;

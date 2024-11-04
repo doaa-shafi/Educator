@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
 import useAxiosPrivate from '../hooks/useAxiosPrivate'
@@ -6,18 +6,32 @@ import logo from '../assets/logo_dark.png'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { format } from 'date-fns';
+import { Bar } from 'react-chartjs-2';
+import Chart from 'chart.js/auto';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import dayjs from 'dayjs';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+// Register the plugin with Chart.js
+Chart.register(ChartDataLabels);
 
 const InstructorDashBoardWallet = () => {
     const { auth } = useAuth()
     const axiosPrivate = useAxiosPrivate()
-    const [Transactions, setTransactions] = useState([])
-    const [revenue,setRevenue]=useState()
+    const [instructor, setInstructor] = useState()
+    const [transactions, setTransactions] = useState([])
+    const [revenue, setRevenue] = useState()
+
+    const [showTransactionsActions, setShowTransactionsActions] = useState(false)
+    const [showRevenueOptions,setShowRevenueOptions]=useState(false)
+    const [revenueStatisticsOption, setRevenueStatisticsOption] = useState("day")
 
     useEffect(() => {
         const getPayments = async () => {
             try {
                 const res = await axiosPrivate.get(`/payments/`);
                 setTransactions(res.data)
+                console.log(res.data)
                 let revenue = res.data.reduce((total, trans) => total + trans.amount, 0);
                 setRevenue(revenue);
             } catch (error) {
@@ -27,6 +41,101 @@ const InstructorDashBoardWallet = () => {
         };
 
         getPayments();
+    }, []);
+    const totalAmountByCourse = useMemo(() => {
+        return transactions.reduce((acc, transaction) => {
+            const courseId = transaction.courseId.title;
+            acc[courseId] = (acc[courseId] || 0) + transaction.amount;
+            return acc;
+        }, {});
+    }, [transactions]);
+
+    // Aggregate by Date (Day, Month, Year)
+    const totalAmountByDay = useMemo(() => {
+        return transactions.reduce((acc, transaction) => {
+            const day = dayjs(transaction.createdAt).format('YYYY-MM-DD');
+            acc[day] = (acc[day] || 0) + transaction.amount;
+            return acc;
+        }, {});
+    }, [transactions]);
+
+    const totalAmountByMonth = useMemo(() => {
+        return transactions.reduce((acc, transaction) => {
+            const month = dayjs(transaction.createdAt).format('YYYY-MM');
+            acc[month] = (acc[month] || 0) + transaction.amount;
+            return acc;
+        }, {});
+    }, [transactions]);
+
+    const totalAmountByYear = useMemo(() => {
+        return transactions.reduce((acc, transaction) => {
+            const year = dayjs(transaction.createdAt).format('YYYY');
+            acc[year] = (acc[year] || 0) + transaction.amount;
+            return acc;
+        }, {});
+    }, [transactions]);
+
+    // Prepare data for Chart.js
+    const prepareChartData = (data, label) => {
+        return {
+            labels: Object.keys(data),
+            datasets: [
+                {
+                    label: label,
+                    data: Object.values(data),
+                },
+            ],
+        };
+    };
+
+    const options = {
+        responsive: true,
+        indexAxis: 'y', // Makes the chart horizontal
+        plugins: {
+            legend: {
+                display: true,
+                position: "top",
+            },
+            datalabels: {
+                anchor: 'start',
+                align: 'end',
+                offset: 0,
+                formatter: (value, context) => {
+                    return context.chart.data.labels[context.dataIndex];
+                },
+                color: '#333',
+                font: {
+                    size: 13,
+                    weight: 200,
+                },
+            },
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+            },
+            y: {
+                ticks: {
+                    display: false,
+                },
+                grid: {
+                    display: false,
+                },
+            },
+        },
+    };
+
+    useEffect(() => {
+        const getInstructor = async () => {
+            try {
+                const res = await axiosPrivate.get(`/instructors/?includedCourses=none`);
+                setInstructor(res.data.instructor);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        getInstructor();
     }, []);
 
     const [isDivVisible, setIsDivVisible] = useState(false);
@@ -163,58 +272,36 @@ const InstructorDashBoardWallet = () => {
                         </div>
                         <div className="margin-top-30"></div>
                         <div class="row">
-                            <div class="col-lg-4">
+                            <div class="col-lg-2">
                                 <div class="card">
                                     <div class="card-body">
-                                        <div class="dropdown float-right position-relative">
-                                            <a href="#" class="dropdown-toggle h4 text-muted" data-toggle="dropdown"
-                                                aria-expanded="false">
-                                                <i class="mdi mdi-dots-vertical"></i>
-                                            </a>
-                                            <ul class="dropdown-menu dropdown-menu-right">
-                                                <li><a href="#" class="dropdown-item">Action</a></li>
-                                                <li><a href="#" class="dropdown-item">Another action</a></li>
-                                                <li><a href="#" class="dropdown-item">Something else here</a></li>
-                                                <li class="dropdown-divider"></li>
-                                                <li><a href="#" class="dropdown-item">Separated link</a></li>
-                                            </ul>
+                                        <div className="flex-row padding-bottom-10">
+                                            <h4 class="card-title d-inline-block">Wallet</h4>
+                                            <MoreVertIcon />
                                         </div>
-                                        <h4 class="card-title d-inline-block">Daily Sales</h4>
-
-                                        <div id="morris-donut-example" class="morris-chart" style={{ height: "260px" }}></div>
-
+                                        <div className="amount-01">
+                                            <h2 >${instructor?.wallet}</h2>
+                                        </div>
                                         <div class="row text-center mt-4">
-                                            <div class="col-6">
-                                                <h4>5,459</h4>
-                                                <p class="text-muted mb-0">Total Sales</p>
-                                            </div>
-                                            <div class="col-6">
-                                                <h4>18</h4>
-                                                <p class="text-muted mb-0">Open Compaign</p>
+                                            <div class="col-12">
+                                                {instructor?.wallet > 0 ?
+                                                    <h4>Withdraw</h4> :
+                                                    <h4>You cannot withdraw money under $</h4>
+                                                }
+                                                <p class="text-muted mb-0">Total withdrawed money : {revenue - instructor?.wallet}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4">
+                            <div class="col-lg-5">
                                 <div class="card">
                                     <div class="card-body">
-                                        <div class="dropdown float-right position-relative">
-                                            <a href="#" class="dropdown-toggle h4 text-muted" data-toggle="dropdown"
-                                                aria-expanded="false">
-                                                <i class="mdi mdi-dots-vertical"></i>
-                                            </a>
-                                            <ul class="dropdown-menu dropdown-menu-right">
-                                                <li><a href="#" class="dropdown-item">Action</a></li>
-                                                <li><a href="#" class="dropdown-item">Another action</a></li>
-                                                <li><a href="#" class="dropdown-item">Something else here</a></li>
-                                                <li class="dropdown-divider"></li>
-                                                <li><a href="#" class="dropdown-item">Separated link</a></li>
-                                            </ul>
+                                        <div className="flex-row padding-bottom-10">
+                                            <h4 class="card-title d-inline-block">Revenue Per Course</h4>
+                                            <MoreVertIcon />
                                         </div>
-                                        <h4 class="card-title d-inline-block">Statistics</h4>
-
-                                        <div id="morris-bar-example" class="morris-chart" style={{ height: "260px" }}></div>
+                                        <Bar data={prepareChartData(totalAmountByCourse, 'Total Revenue per Course')} options={options} />
 
                                         <div class="row text-center mt-4">
                                             <div class="col-6">
@@ -230,26 +317,33 @@ const InstructorDashBoardWallet = () => {
                                 </div>
                             </div>
 
-                            <div class="col-lg-4">
+                            <div class="col-lg-5">
                                 <div class="card">
                                     <div class="card-body">
-                                        <div class="dropdown float-right position-relative">
-                                            <a href="#" class="dropdown-toggle h4 text-muted" data-toggle="dropdown"
-                                                aria-expanded="false">
-                                                <i class="mdi mdi-dots-vertical"></i>
-                                            </a>
-                                            <ul class="dropdown-menu dropdown-menu-right">
-                                                <li><a href="#" class="dropdown-item">Action</a></li>
-                                                <li><a href="#" class="dropdown-item">Another action</a></li>
-                                                <li><a href="#" class="dropdown-item">Something else here</a></li>
-                                                <li class="dropdown-divider"></li>
-                                                <li><a href="#" class="dropdown-item">Separated link</a></li>
-                                            </ul>
+                                        <div className="flex-row padding-bottom-10">
+                                            <h4 class="card-title d-inline-block">Revenue Per Day</h4>
+                                            <div className="flex-column">
+                                                <span onClick={() => setShowRevenueOptions(!showRevenueOptions)}>
+                                                    <MoreVertIcon />
+                                                </span>
+                                                {showRevenueOptions &&
+                                                    <ul className={`main-nav__list_3`}>
+                                                        <li onClick={()=>setRevenueStatisticsOption("day")}>
+                                                            Revenue Per Day
+                                                        </li>
+                                                        <li onClick={()=>setRevenueStatisticsOption("month")}>
+                                                            Revenue Per Month
+                                                        </li>
+                                                        <li onClick={()=>setRevenueStatisticsOption("year")}>
+                                                            Revenue Per Year
+                                                        </li>
+                                                    </ul>
+                                                }
+                                            </div>
                                         </div>
-                                        <h4 class="card-title d-inline-block">Total Revenue</h4>
-
-                                        <div id="morris-line-example" class="morris-chart" style={{ height: "260px" }}></div>
-
+                                        {revenueStatisticsOption === "day" && <Bar data={prepareChartData(totalAmountByDay, 'Total Revenue per Day')} />}
+                                        {revenueStatisticsOption === "month" && <Bar data={prepareChartData(totalAmountByMonth, 'Total Revenue per Month')} />}
+                                        {revenueStatisticsOption === "year" && <Bar data={prepareChartData(totalAmountByYear, 'Total Revenue per Year')} />}
                                         <div class="row text-center mt-4">
                                             <div class="col-6">
                                                 <h4>$7841.12</h4>
@@ -269,48 +363,58 @@ const InstructorDashBoardWallet = () => {
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-body">
-                                        <div class="dropdown float-right position-relative">
-                                            <a href="#" class="dropdown-toggle h4 text-muted" data-toggle="dropdown"
-                                                aria-expanded="false">
-                                                <i class="mdi mdi-dots-vertical"></i>
-                                            </a>
-                                            <ul class="dropdown-menu dropdown-menu-right">
-                                                <li><a href="#" class="dropdown-item">Action</a></li>
-                                                <li><a href="#" class="dropdown-item">Another action</a></li>
-                                                <li><a href="#" class="dropdown-item">Something else here</a></li>
-                                                <li class="dropdown-divider"></li>
-                                                <li><a href="#" class="dropdown-item">Separated link</a></li>
-                                            </ul>
+                                        <div className="flex-row padding-bottom-10">
+                                            <h4 class="card-title overflow-hidden">All Transactions</h4>
+                                            <div className="flex-column">
+                                                <span onClick={() => setShowTransactionsActions(!showTransactionsActions)}>
+                                                    Sort By <MoreVertIcon />
+                                                </span>
+                                                {showTransactionsActions &&
+                                                    <ul className={`main-nav__list_3 ${toggleList ? 'active' : ''}`}>
+                                                        <li>
+                                                            Newest
+                                                        </li>
+                                                        <li >
+                                                            Oldest
+                                                        </li>
+                                                        <li>
+                                                            Highest Amount
+                                                        </li>
+                                                        <li>
+                                                            Lowest Amount
+                                                        </li>
+
+                                                    </ul>
+                                                }
+                                            </div>
+
                                         </div>
-                                        <h4 class="card-title overflow-hidden">Total Transactions</h4>
-                                        <p class="card-subtitle mb-4 font-size-13 overflow-hidden">Transaction period from 21 July to 25 Aug
-                                        </p>
                                         <div class="table-responsive">
                                             <table
                                                 class="table table-borderless table-hover table-centered table-nowrap mb-0">
                                                 <tbody>
-                                                    {Transactions.map((Transaction, index) =>
+                                                    {transactions.map((transaction, index) =>
                                                         <tr>
                                                             <td>
-                                                                <h5 class="font-size-15 mb-1 font-weight-normal">{format(new Date(Transaction.createdAt), 'MMMM do, yyyy')}</h5>
+                                                                <h5 class="font-size-15 mb-1 font-weight-normal">{format(new Date(transaction.createdAt), 'MMMM do, yyyy')}</h5>
                                                                 <span class="text-muted font-size-12">Date</span>
                                                             </td>
                                                             <td>
-                                                                <h5 class="font-size-15 mb-1 font-weight-normal">{Transaction.courseId.title}</h5>
+                                                                <h5 class="font-size-15 mb-1 font-weight-normal">{transaction.courseId.title}</h5>
                                                                 <span class="text-muted font-size-12">Course</span>
                                                             </td>
                                                             <td>
-                                                                <h5 class="font-size-15 mb-1 font-weight-normal">$ {Transaction.amount}</h5>
+                                                                <h5 class="font-size-15 mb-1 font-weight-normal">$ {transaction.amount}</h5>
                                                                 <span class="text-muted font-size-12">Amount</span>
                                                             </td>
-                                                            {Transaction.payerId.__t === "IndividualTrainee" &&
+                                                            {transaction.payerId.__t === "IndividualTrainee" &&
                                                                 <td>
-                                                                    <span class="badge p-2 type-01"><h5 style={{ "marginBottom": '0px', color: "black" }}>{Transaction.payerId.__t}</h5></span>
+                                                                    <span class="badge p-2 type-01"><h5 style={{ "marginBottom": '0px', color: "black" }}>{transaction.payerId.__t}</h5></span>
                                                                 </td>
                                                             }
-                                                            {Transaction.payerId.__t === "Corporate" &&
+                                                            {transaction.payerId.__t === "Corporate" &&
                                                                 <td>
-                                                                    <span class="badge p-2 type-02"><h5 style={{ "marginBottom": '0px', color: "black" }}>{Transaction.payerId.__t}</h5></span>
+                                                                    <span class="badge p-2 type-02"><h5 style={{ "marginBottom": '0px', color: "black" }}>{transaction.payerId.__t}</h5></span>
                                                                 </td>
                                                             }
                                                         </tr>)}

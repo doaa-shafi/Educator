@@ -221,21 +221,21 @@ const CorporateDashBoardTrainees = () => {
                             <label className="label1">Temporary password</label>
                             <input type='password' onChange={(e) => { setPassword(e.target.value); validatePassword(e.target.value); }} value={password} />
                             <div>
-                            <h6 style={{ color: passwordCriteria.minLength ? 'green' : 'red' }}>
-                                Password must be at least 8 characters
-                            </h6>
-                            <h6 style={{ color: passwordCriteria.uppercase ? 'green' : 'red' }}>
-                                Password must contain at least one uppercase letter
-                            </h6>
-                            <h6 style={{ color: passwordCriteria.lowercase ? 'green' : 'red' }}>
-                                Password must contain at least one lowercase letter
-                            </h6>
-                            <h6 style={{ color: passwordCriteria.number ? 'green' : 'red' }}>
-                                Password must contain at least one number
-                            </h6>
-                            <h6 style={{ color: passwordCriteria.specialChar ? 'green' : 'red' }}>
-                                Password must contain at least one special character (#?!@$%^&*-)
-                            </h6>
+                                <h6 style={{ color: passwordCriteria.minLength ? 'green' : 'red' }}>
+                                    Password must be at least 8 characters
+                                </h6>
+                                <h6 style={{ color: passwordCriteria.uppercase ? 'green' : 'red' }}>
+                                    Password must contain at least one uppercase letter
+                                </h6>
+                                <h6 style={{ color: passwordCriteria.lowercase ? 'green' : 'red' }}>
+                                    Password must contain at least one lowercase letter
+                                </h6>
+                                <h6 style={{ color: passwordCriteria.number ? 'green' : 'red' }}>
+                                    Password must contain at least one number
+                                </h6>
+                                <h6 style={{ color: passwordCriteria.specialChar ? 'green' : 'red' }}>
+                                    Password must contain at least one special character (#?!@$%^&*-)
+                                </h6>
                             </div>
                         </div>
                         <div className="input">
@@ -261,11 +261,9 @@ const CorporateDashBoardTrainees = () => {
                                         <li class="active">
                                             <Link to={'/corporate-dashboard/trainees'}>Trainees</Link>
                                         </li>
-                                        {corporate?.plan === "Premium" &&
-                                            <li >
-                                                <Link to={'/corporate-dashboard/teams'}>Teams</Link>
-                                            </li>
-                                        }
+                                        <li>
+                                            <Link to={'/corporate-dashboard/courses'}>Courses Registry</Link>
+                                        </li>
                                         <li>
                                             <Link to={'/corporate-dashboard/plan&payment'}>Plan & Payment</Link>
                                         </li>
@@ -285,11 +283,9 @@ const CorporateDashBoardTrainees = () => {
                                     }
                                     {!isDivVisible && toggleList &&
                                         <ul className={`main-nav__list_3 ${toggleList ? 'active' : ''}`}>
-                                            {corporate?.plan === "Premium" &&
-                                                <li >
-                                                    <Link to={'/corporate-dashboard/teams'}>Teams</Link>
-                                                </li>
-                                            }
+                                            <li>
+                                                <Link to={'/corporate-dashboard/courses'}>Courses Registry</Link>
+                                            </li>
                                             <li>
                                                 <Link to={'/corporate-dashboard/plan&payment'}>Plan & Payment</Link>
                                             </li>

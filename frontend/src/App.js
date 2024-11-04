@@ -1,4 +1,7 @@
 import { Routes, Route } from "react-router-dom";
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+
 import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth";
 //public
@@ -24,13 +27,14 @@ import ITraineeDashBoardEnrollments from "./pages/ITraineeDashBoardEnrollments";
 
 import CorporateDashBoardTrainees from "./pages/CorporateDashBoardTrainees";
 import CorporateDashBoardTrainee from "./pages/corporateDashBoardTrainee";
-import CorporateDashBoardTeams from "./pages/CorporateDashBoardTeams";
 import CorporateDashBoardTeam from "./pages/CorporateDashBoardTeam";
 import CorporateDashBoardPlanAndPayment from "./pages/CorporateDashBoardPlanAndPayment";
+import CorporateDashBoardCourses from "./pages/CorporateDashBoardCourses";
 
 import InstructorCoursePreview from "./pages/InstructorCoursePreview";
 import InstructorLandingPage from "./pages/InstructorLandingPage";
 import Categories from "./pages/Categories";
+const stripePromise = loadStripe('pk_test_51QHO02DO3byePzbJj26959Nt4iMfqcb4cjCpwlEuQqUCrPMdaMVqa2BLhx0zgNHVbXIyxEMCq4iqHFlZ6i3VbDk100GIhfxyR6');
 
 
 function App() {
@@ -64,9 +68,10 @@ function App() {
             element={<CorporateDashBoardTrainee />}
           />
           <Route
-            path="/corporate-dashboard/teams"
-            element={<CorporateDashBoardTeams />}
+            path="/corporate-dashboard/courses"
+            element={<CorporateDashBoardCourses />}
           />
+        
           <Route
             path="/team/:id"
             element={<CorporateDashBoardTeam />}

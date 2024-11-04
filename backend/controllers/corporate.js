@@ -28,18 +28,6 @@ const  getSignedInCorporateWithTrainees=async (req, res)=> {
         res.status(400).json({ error: err.message });
     }
 }
-const  getSignedInCorporateWithTeams=async (req, res)=> {
-    const corporateId=req.id;
-    try {
-        authorize(req.role,RESOURSES_NAMES.Corporate,[ACTIONS_NAMES.READ_OWN],true)
-        const corporate = await corporateService.getCorporateByIdWithTeams(corporateId);
-        res.status(200).json(corporate);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
-    }
-}
-
-
 
 const addCorporate = async (req, res,next) => {// pay
   const { username,email,password,confirm_password,plan,paymentMethodId} = req.body;
@@ -53,11 +41,26 @@ const addCorporate = async (req, res,next) => {// pay
     next(error)
   }  
 };
-
+const registerToCourse = async (req, res, next) => {
+  const { courseId,totalEnrollments, token } = req.body;
+  const corporateId = req.id;
+  try {
+    authorize(req.role, RESOURSES_NAMES.Corporate, [ACTIONS_NAMES.UPDATE_OWN],true);
+    const updatedTrainee = await corporateService.registerToCourse(
+      corporateId,
+      courseId,
+      totalEnrollments,
+      token
+    );
+    res.status(200).json(updatedTrainee);
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getSignedInCorporate,
   getSignedInCorporateWithTrainees,
-  getSignedInCorporateWithTeams,
   addCorporate,
+  registerToCourse
 };
