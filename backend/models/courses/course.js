@@ -1,5 +1,5 @@
 const mongoose= require("mongoose");
-const mongoose_fuzzy_searching = require('mongoose-fuzzy-searching');
+// const mongoose_fuzzy_searching = require('mongoose-fuzzy-searching');
 const uniqueValidator =require("mongoose-unique-validator");
 const { getVideoThumbnailUrl } =require("../../helpers/videoHelpers");
 
@@ -91,14 +91,14 @@ courseSchema.pre('save', function (next) {
     next();
 });
 
-courseSchema.plugin(mongoose_fuzzy_searching, {
-    fields: [
-        {
-            name: "title",
-            minSize: 3,
-            prefixOnly: true
-        },
-    ]
-});
+// courseSchema.plugin(mongoose_fuzzy_searching, {
+//     fields: [
+//         {
+//             name: "title",
+//             minSize: 3,
+//             prefixOnly: true
+//         },
+//     ]
+// });
 
 module.exports = mongoose.model('Course', courseSchema) 

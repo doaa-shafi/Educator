@@ -73,6 +73,7 @@ const InstructorDashBoardDraftCourses = () => {
                 await axiosPrivate.post('/courses/', { title: courseTitle });
                 setShow(false);
                 setIsCourseAdded(true);
+                setCourseTitle("")
             } catch (err) {
                 console.log(err);
                 setError(err?.response?.data?.error || 'No Server Response');
@@ -158,7 +159,9 @@ const InstructorDashBoardDraftCourses = () => {
                 }}
             >
                 <div className="preview-content">
-                    <h3>Create new course</h3>
+                    <div className="input">
+                        <h3>Create new course</h3>
+                    </div>
                     <form action="submit">
                         <div className="input">
                             <label className="label1">Course Title</label>
@@ -168,19 +171,22 @@ const InstructorDashBoardDraftCourses = () => {
                                 onChange={(e) => setCourseTitle(e.target.value)}
                                 value={courseTitle}
                             />
+                            {error !== '' && <p>{error}</p>}
                         </div>
-                        {error !== '' && <p>{error}</p>}
-                        <button type="submit" class="contin" onClick={handleAdd}>
-                            Create
-                        </button>
+
+                        <div className="input">
+                            <button type="submit" class="back" onClick={handleAdd}>
+                                Create
+                            </button>
+                        </div>
                     </form>
                 </div>
             </Modal>
             <div class="wrapp-content">
-                <div className="wrapp-header">
+                <div className="wrapp-header dashboard-header">
                     <div class="main-nav">
                         <div class="container">
-                            <div className="flex-row">
+                            <div className="flex-row padding-around">
                                 <Link to="/" class="logo">
                                     <img src={logo} alt="" />
                                 </Link>
@@ -203,8 +209,9 @@ const InstructorDashBoardDraftCourses = () => {
                                         </li>
                                     </ul>
                                 }
-                                <div className="flex-column">
-                                    {!isDivVisible &&
+                                {!isDivVisible &&
+                                    <div className="flex-column">
+
                                         <ul className="main-nav__list">
                                             <li class="active">
                                                 <Link to={'/instructor-dashboard/draft-courses'}>Draft Courses</Link>
@@ -214,25 +221,26 @@ const InstructorDashBoardDraftCourses = () => {
                                             </li>
                                         </ul>
 
-                                    }
-                                    {!isDivVisible && toggleList &&
-                                        <ul className={`main-nav__list_3 ${toggleList ? 'active' : ''}`}>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/open-courses'}>Open Courses</Link>
-                                            </li>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/closed-courses'}>Closed Courses</Link>
-                                            </li>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/wallet'}>Wallet</Link>
-                                            </li>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/landing-page'}>Landing page</Link>
-                                            </li>
 
-                                        </ul>
-                                    }
-                                </div>
+                                        {toggleList &&
+                                            <ul className={`main-nav__list_3 ${toggleList ? 'active' : ''}`}>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/open-courses'}>Open Courses</Link>
+                                                </li>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/closed-courses'}>Closed Courses</Link>
+                                                </li>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/wallet'}>Wallet</Link>
+                                                </li>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/landing-page'}>Landing page</Link>
+                                                </li>
+
+                                            </ul>
+                                        }
+                                    </div>
+                                }
 
                             </div>
                         </div>
@@ -312,9 +320,9 @@ const InstructorDashBoardDraftCourses = () => {
                         </button>
                     </div>
                     <div className="row dashboard-row margin-bottom-97">
+                        <h4 className="card-title overflow-hidden">Draft Courses</h4>
                         <div className="card">
                             <div className="card-body">
-                                <h4 className="card-title overflow-hidden">Draft Courses</h4>
                                 <div className="table-responsive" id='courses-table'>
                                     <table className="table table-centered table-hover table-xl mb-0" id="recent-orders">
                                         <thead>

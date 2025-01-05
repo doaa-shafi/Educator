@@ -1,3 +1,4 @@
+// const { OAuth2Client } = require("google-auth-library");
 const User = require("../models/users/user");
 const jwt = require("jsonwebtoken");
 const {signupSchema } = require("../validatationSchemas/user");
@@ -6,9 +7,40 @@ const {REFRESH_TOKEN_SECRET}=require('../config/configVariables')
 const {AuthenticationError,AuthorizationError}=require('../helpers/errors')
 const validate=require('../helpers/validate')
 
+// const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 // @desc Login
 // @route POST /auth
 // @access Public
+
+// const socialLogin = async (req, res, next) => {
+//   const { token } = req.body;
+
+//   try {
+//     // Verify token using Google's OAuth2Client
+//     const ticket = await googleClient.verifyIdToken({
+//       idToken: token,
+//       audience: process.env.GOOGLE_CLIENT_ID,
+//     });
+
+//     const { email, name } = ticket.getPayload();
+
+//     // Check if user already exists
+//     let user = await User.findOne({ email });
+//     if (!user) {
+//       // Create a new user (only for Individual Trainees)
+//       user = await User.create({ email, firstName: name, lastName: "", password: "" });
+//     }
+
+//     const accessToken = generateAccessToken(user.email, user._id, user.__t);
+//     const refreshToken = generateRefreshToken(user.email);
+
+//     res.status(200).json({ accessToken, refreshToken, role: user.__t });
+//   } catch (error) {
+//     next(new AuthenticationError("Social login failed."));
+//   }
+// };
+
 const login = async (req, res, next) => {
   const { email, password } = req.body;
   try {

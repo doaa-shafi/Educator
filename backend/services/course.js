@@ -1,4 +1,5 @@
 const Course = require("../models/courses/course");
+const Corporate = require("../models/users/corporate");
 const lessonService = require("./lesson");
 const { ServerError, AuthorizationError } = require("../helpers/errors");
 const { getVideoThumbnailUrl } = require("../helpers/videoHelpers");
@@ -6,32 +7,62 @@ const validate = require("../helpers/validate");
 const { publishCourseSchema } = require("../validatationSchemas/course");
 
 class courseService {
-  async searchAndFilterCourses(search, level, priceMin, priceMax, subject) {
-    let filter = {};
+  async searchAndFilterCourses(
+    subjects,
+    search,
+    level,
+    priceMin,
+    priceMax,
+    page,
+    limit
+  ) {
+    const query = {};
 
-    if (level) {
-      filter.level = level;
+    // Filter by subjects (categories)
+    if (subjects) {
+      query.subject = { $in: subjects.split(",") };
     }
-    if (priceMin || priceMax) {
-      filter.price = {};
-      if (priceMin) filter.price.$gte = priceMin;
-      if (priceMax) filter.price.$lte = priceMax;
-    }
-    if (subject) {
-      filter.subject = subject;
-    }
+
+    // Search by title
     if (search) {
-      return await Course.fuzzySearch(search).find(filter);
-    } else {
-      return await Course.find(filter);
+      query.title = { $regex: search, $options: "i" }; // Case-insensitive search
     }
+
+    // Filter by level
+    if (level) {
+      query.level = { $in: level.split(",") };
+    }
+
+    // Filter by price
+    if (priceMin || priceMax) {
+      query.price = {};
+      if (priceMin) query.price.$gte = Number(priceMin);
+      if (priceMax) query.price.$lte = Number(priceMax);
+    }
+
+    const totalCourses = await Course.countDocuments(query);
+    const totalPages = Math.ceil(totalCourses / limit);
+
+    const courses = await Course.find(query)
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+
+    return { courses, totalPages };
   }
-  async getPopulerCoursesInfo() {
-    return await Course.find({ status: "published" })
-      .select({ lessons: 0 })
-      .sort({ enrolledStudents: -1 })
-      .limit(20);
-  }
+
+  async getPopulerCoursesInfo(page = 1, limit = 6) {
+    const skip = (page - 1) * limit; // Calculate the number of documents to skip
+    const totalCourses = await Course.countDocuments({ status: "published" }); // Total number of courses
+
+    const courses = await Course.find({ status: "published" })
+        .select({ lessons: 0 })
+        .sort({ enrolledStudents: -1 }) // Sort by enrolled students (descending)
+        .skip(skip)
+        .limit(limit);
+
+    return { courses, totalCourses }; // Return courses and total count for frontend calculations
+}
+
   async getDraftCourses(instructor) {
     return await Course.find({ instructor: instructor, status: "draft" });
   }
@@ -68,9 +99,11 @@ class courseService {
     return await Course.findById(id);
   }
 
-  async getCalculatedPrice(courseId,totalEnrollments){
-    const course=await Course.findById(courseId)
-    return course.price*totalEnrollments
+  async getCalculatedPrice(corporateId, courseId, totalEnrollments) {
+    const course = await Course.findById(courseId);
+    const corporate = await Corporate.findById(corporateId).select({ plan: 1 });
+    const discount = corporate.plan === "Premium" ? 0.3 : 0.2;
+    return Math.round(course.price * totalEnrollments * (1 - discount));
   }
 
   async createCourse(title, instructor) {

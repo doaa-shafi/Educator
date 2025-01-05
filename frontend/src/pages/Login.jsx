@@ -10,6 +10,9 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import useAuth from '../hooks/useAuth';
 
+import { auth, googleProvider, facebookProvider } from "./firebase-config";
+import { signInWithPopup } from "firebase/auth";
+
 const Login = () => {
 
   const navigate = useNavigate();
@@ -21,56 +24,57 @@ const Login = () => {
 
 
   const handleLogin = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (email === "" || password === "") {
-      setError("Please enter all fields")
-    }
-
-    else {
-
+      setError("Please enter all fields");
+    } else {
       try {
-        const response = await axios.post('/auth/',
+        const response = await axios.post(
+          "/auth/",
           JSON.stringify({ email, password }),
           {
-            headers: { 'Content-Type': 'application/json' },
-            withCredentials: true
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
           }
         );
-        console.log(response.data)
-        
 
-        const accessToken = response?.data?.accessToken;
-        const role = response?.data?.role;
-        setAuth({ email: email, password: password, accessToken: accessToken, role: role });
-        console.log(auth)
-        if (role === 'IndividualTrainee') {
-          navigate('/ITrainee-dashboard-enrollments')
-        } else if (role === 'CTrainee') {
-
-        } else if (role === 'Instructor') {
-          navigate('/instructor-dashboard/draft-courses')
-        } else if (role === 'admin') {
-
-        } else if (role === 'Corporate') {
-          console.log("here")
-          navigate('/corporate-dashboard/trainees')
-
-        }
+        const { accessToken, role } = response.data;
+        setAuth({ email, password, accessToken, role });
+        navigateBasedOnRole(role);
       } catch (err) {
-        console.log(err)
-        if (!err?.response) {
-          setError('No Server Response');
-        }
-        else {
-          setError(err.response.data.error)
-        }
-
+        setError(err.response?.data?.error || "Login failed. Please try again.");
       }
-
     }
-  }
+  };
 
+  // Handle social sign-in
+  const handleSocialSignIn = async (provider) => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const token = await result.user.getIdToken();
+
+      // Send token to the backend for authentication
+      const response = await axios.post(
+        "/auth/social-login",
+        { token },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      const { accessToken, role } = response.data;
+      setAuth({ email: result.user.email, accessToken, role });
+      navigateBasedOnRole(role);
+    } catch (err) {
+      setError("Social sign-in failed. Please try again.");
+    }
+  };
+
+  const navigateBasedOnRole = (role) => {
+    if (role === "IndividualTrainee") navigate("/ITrainee-dashboard-enrollments");
+    else if (role === "Corporate") navigate("/corporate-dashboard/trainees");
+    else if (role === "Instructor") navigate("/instructor-dashboard/draft-courses");
+    else if (role === "Admin") navigate("/admin-dashboard");
+  };
 
 
   return (
@@ -102,18 +106,18 @@ const Login = () => {
           <hr />
         </div>
         <div className="options">
-          <div className="option">
+          <div className="option" onClick={() => handleSocialSignIn(googleProvider)}>
             <img className="auth-logo" src={google} alt="" />
             <span>Continue with Google</span>
           </div>
-          <div className="option">
+          <div className="option" onClick={() => handleSocialSignIn(facebookProvider)}>
             <img className="auth-logo" src={facebook} alt="" />
             <span>Continue with Facebook</span>
           </div>
-          <div className="option">
+          {/* <div className="option" onClick={() => handleSocialSignIn("apple")}>
             <img className="auth-logo" src={apple} alt="" />
             <span>Continue with Apple</span>
-          </div>
+          </div> */}
         </div>
 
       </form>

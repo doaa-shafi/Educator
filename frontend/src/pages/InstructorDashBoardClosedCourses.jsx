@@ -44,7 +44,7 @@ const InstructorDashBoardClosedCourses = () => {
         getCourses();
     }, []);
 
-    
+
 
     const [isDivVisible, setIsDivVisible] = useState(false);
     const [toggleList, setToggleList] = useState()
@@ -74,10 +74,10 @@ const InstructorDashBoardClosedCourses = () => {
     return (
         <div class="teach-with-us">
             <div class="wrapp-content">
-                <div className="wrapp-header">
+                <div className="wrapp-header dashboard-header">
                     <div class="main-nav">
                         <div class="container">
-                            <div className="flex-row">
+                            <div className="flex-row padding-around">
                                 <Link to="/" class="logo">
                                     <img src={logo} alt="" />
                                 </Link>
@@ -100,8 +100,9 @@ const InstructorDashBoardClosedCourses = () => {
                                         </li>
                                     </ul>
                                 }
-                                <div className="flex-column">
-                                    {!isDivVisible &&
+                                {!isDivVisible &&
+                                    <div className="flex-column">
+
                                         <ul className="main-nav__list">
                                             <li class="active">
                                                 <Link to={'/instructor-dashboard/closed-courses'}>Closed Courses</Link>
@@ -110,26 +111,25 @@ const InstructorDashBoardClosedCourses = () => {
                                                 {toggleList ? <ExpandLessIcon onClick={handleIconClick} /> : <ExpandMoreIcon onClick={handleIconClick} />}
                                             </li>
                                         </ul>
+                                        {toggleList &&
+                                            <ul className={`main-nav__list_3 ${toggleList ? 'active' : ''}`}>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/draft-courses'}>Draft Courses</Link>
+                                                </li>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/open-courses'}>Open Courses</Link>
+                                                </li>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/wallet'}>Wallet</Link>
+                                                </li>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/landing-page'}>Landing page</Link>
+                                                </li>
 
-                                    }
-                                    {!isDivVisible && toggleList &&
-                                        <ul className={`main-nav__list_3 ${toggleList ? 'active' : ''}`}>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/draft-courses'}>Draft Courses</Link>
-                                            </li>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/open-courses'}>Open Courses</Link>
-                                            </li>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/wallet'}>Wallet</Link>
-                                            </li>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/landing-page'}>Landing page</Link>
-                                            </li>
-
-                                        </ul>
-                                    }
-                                </div>
+                                            </ul>
+                                        }
+                                    </div>
+                                }
 
                             </div>
                         </div>
@@ -164,9 +164,9 @@ const InstructorDashBoardClosedCourses = () => {
                         </div>
                     </div>
                     <div class="row dashboard-row">
+                        <h4 class="card-title overflow-hidden">Closed Courses</h4>
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title overflow-hidden">Closed Courses</h4>
                                 <div class="table-responsive">
                                     <table class="table table-centered table-hover table-xl mb-0" id="recent-orders">
                                         <thead>

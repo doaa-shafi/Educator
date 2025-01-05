@@ -1,5 +1,6 @@
 const Enrollment = require("../models/courses/enrollment");
 const Lesson = require("../models/courses/lesson");
+const Course=require("../models/courses/course")
 const lessonService = require("./lesson");
 const dayjs = require('dayjs');
 
@@ -39,7 +40,7 @@ class enrollmentService {
     }
 
     // Use the session when creating the enrollment to ensure it's part of the transaction
-    return await Enrollment.create(
+    const enrollment= await Enrollment.create(
       [
         {
           course: course,
@@ -51,6 +52,13 @@ class enrollmentService {
       ],
       { session } // Pass the session as an option here
     );
+
+    await Course.findByIdAndUpdate(
+      course, 
+      { $inc: { enrolledStudents: 1 } }, 
+      { session } // Ensure the update is part of the transaction
+  );
+  return enrollment;
   }
 
   async updateProgress(traineeId, courseId, lessonId, itemNumber) {

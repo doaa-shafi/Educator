@@ -4,14 +4,14 @@ const authorize = require("../helpers/authorize");
 const { RESOURSES_NAMES, ACTIONS_NAMES } = require("../config/constants");
 
 const registerToCourse = async (req, res, next) => {
-  const { courseId, token } = req.body;
+  const { courseId, paymentMethodId } = req.body;
   const traineeId = req.id;
   try {
     authorize(req.role, RESOURSES_NAMES.ITrainee, [ACTIONS_NAMES.UPDATE_OWN],true);
     const updatedTrainee = await individualTraineeService.registerToCourse(
       traineeId,
       courseId,
-      token
+      paymentMethodId
     );
     res.status(200).json(updatedTrainee);
   } catch (error) {

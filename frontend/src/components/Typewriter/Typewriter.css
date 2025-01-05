@@ -1,10 +1,10 @@
-.text-container {
+/* .text-container {
     font-family: 'Arial', sans-serif;
-    font-size: 16px; /* Smaller font size for corporate messaging */
+    font-size: 16px; 
     display: inline-block;
     overflow: hidden;
     white-space: nowrap;
-    border-right: 1px solid black; /* Smaller border for blinking cursor */
+    border-right: 1px solid black; 
   }
   
   .typing {
@@ -28,4 +28,245 @@
   @keyframes blink-caret {
     50% { border-color: transparent; }
   }
+   */
+
+   .current-word {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .current-word::before {
+    content: "growth";
+    animation: words 15s linear infinite; /* Use linear for constant smoothness */
+  }
+  
+  .current-word::after {
+    content: "";
+    position: absolute;
+    width: 1px;
+    height: 100%;
+    background-color: black;
+    border-left: 2px solid white;
+    right: -8px;
+    /* animation: cursor-blink 0.6s steps(2) infinite; */
+  }
+  
+  @keyframes cursor-blink {
+    0%, 50% {
+      opacity: 1;
+    }
+    51%, 100% {
+      opacity: 0;
+    }
+  }
+  @keyframes words {
+    /* Word 1: "growth" */
+    0%, 1.49% {
+      content: "";
+    }
+    1.49%, 2.98% {
+      content: "g";
+    }
+    2.98%, 4.47% {
+      content: "gr";
+    }
+    4.47%, 5.96% {
+      content: "gro";
+    }
+    5.96%, 7.45% {
+      content: "grow";
+    }
+    7.45%, 8.94% {
+      content: "growt";
+    }
+    8.94%, 10.43% {
+      content: "growth";
+    }
+    10.43%, 11.92% {
+      content: "growth"; /* Fully visible */
+    }
+    11.92%, 13.41% {
+      content: "growt";
+    }
+    13.41%, 14.90% {
+      content: "grow";
+    }
+    14.90%, 16.39% {
+      content: "gro";
+    }
+    16.39%, 17.88% {
+      content: "gr";
+    }
+    17.88%, 19.37% {
+      content: "g";
+    }
+    19.37%, 20.86% {
+      content: "";
+    }
+  
+    /* Word 2: "innovation" */
+    20.86%, 22.35% {
+      content: "i";
+    }
+    22.35%, 23.84% {
+      content: "in";
+    }
+    23.84%, 25.33% {
+      content: "inn";
+    }
+    25.33%, 26.82% {
+      content: "inno";
+    }
+    26.82%, 28.31% {
+      content: "innov";
+    }
+    28.31%, 29.80% {
+      content: "innova";
+    }
+    29.80%, 31.29% {
+      content: "innovat";
+    }
+    31.29%, 32.78% {
+      content: "innovati";
+    }
+    32.78%, 34.27% {
+      content: "innovatio";
+    }
+    34.27%, 35.76% {
+      content: "innovation";
+    }
+    35.76%, 37.25% {
+      content: "innovation"; /* Fully visible */
+    }
+    37.25%, 38.74% {
+      content: "innovatio";
+    }
+    38.74%, 40.23% {
+      content: "innovati";
+    }
+    40.23%, 41.72% {
+      content: "innovat";
+    }
+    41.72%, 43.21% {
+      content: "innova";
+    }
+    43.21%, 44.70% {
+      content: "innov";
+    }
+    44.70%, 46.19% {
+      content: "inno";
+    }
+    46.19%, 47.68% {
+      content: "inn";
+    }
+    47.68%, 49.17% {
+      content: "in";
+    }
+    49.17%, 50.66% {
+      content: "i";
+    }
+    50.66%, 52.15% {
+      content: "";
+    }
+  
+    /* Word 3: "employee success" */
+    52.15%, 53.64% {
+      content: "e";
+    }
+    53.64%, 55.13% {
+      content: "em";
+    }
+    55.13%, 56.62% {
+      content: "emp";
+    }
+    56.62%, 58.11% {
+      content: "empl";
+    }
+    58.11%, 59.60% {
+      content: "emplo";
+    }
+    59.60%, 61.09% {
+      content: "employ";
+    }
+    61.09%, 62.58% {
+      content: "employe";
+    }
+    62.58%, 64.07% {
+      content: "employee";
+    }
+    64.07%, 65.56% {
+      content: "employee ";
+    }
+    65.56%, 67.05% {
+      content: "employee s";
+    }
+    67.05%, 68.54% {
+      content: "employee su";
+    }
+    68.54%, 70.03% {
+      content: "employee suc";
+    }
+    70.03%, 71.52% {
+      content: "employee succ";
+    }
+    71.52%, 73.01% {
+      content: "employee succe";
+    }
+    73.01%, 74.50% {
+      content: "employee succes";
+    }
+    74.50%, 76.00% {
+      content: "employee success";
+    }
+    76.00%, 77.49% {
+      content: "employee success"; /* Fully visible */
+    }
+    77.49%, 78.98% {
+      content: "employee succes";
+    }
+    78.98%, 80.47% {
+      content: "employee succe";
+    }
+    80.47%, 81.96% {
+      content: "employee succ";
+    }
+    81.96%, 83.45% {
+      content: "employee suc";
+    }
+    83.45%, 84.94% {
+      content: "employee su";
+    }
+    84.94%, 86.43% {
+      content: "employee s";
+    }
+    86.43%, 87.92% {
+      content: "employee ";
+    }
+    87.92%, 89.41% {
+      content: "employee";
+    }
+    89.41%, 90.90% {
+      content: "employe";
+    }
+    90.90%, 92.39% {
+      content: "employ";
+    }
+    92.39%, 93.88% {
+      content: "emplo";
+    }
+    93.88%, 95.37% {
+      content: "empl";
+    }
+    95.37%, 96.86% {
+      content: "emp";
+    }
+    96.86%, 98.35% {
+      content: "em";
+    }
+    98.35%, 100% {
+      content: "e";
+    }
+  }
+  
+  
   

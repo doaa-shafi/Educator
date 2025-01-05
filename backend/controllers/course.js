@@ -5,24 +5,30 @@ const validate=require('../helpers/validate');
 const authorize = require("../helpers/authorize");
 const {RESOURSES_NAMES,ACTIONS_NAMES}=require('../config/constants')
 
-const searchAndFilterCourses= async (req,res,next)=>{
-  const { search, level, priceMin, priceMax, subject } = req.query;
-  try {
-    const courses=await courseService.searchAndFilterCourses(search, level, priceMin, priceMax, subject)
-    res.status(200).json(courses)
-  } catch (error) {
-    next(error)
-  }
-}
-const getPopulerCoursesInfo= async (req,res,next)=>{
-  try {
-    const courses= await courseService.getPopulerCoursesInfo();
-    res.status(200).json(courses)
-  } catch (error) {
-    next(error)
-  }
 
-}
+const searchAndFilterCourses= async (req, res) => {
+  const { categories, search, level, priceMin, priceMax, page = 1, limit = 6 } = req.query;
+  try {
+    const {courses,totalPages}=await courseService.searchAndFilterCourses(categories, search, level, priceMin, priceMax, page, limit)
+    res.status(200).json({ courses, totalPages });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+const getPopulerCoursesInfo = async (req, res, next) => {
+  try {
+      const page = parseInt(req.query.page, 10) || 1; // Default to page 1
+      const limit = parseInt(req.query.limit, 10) || 10; // Default to 10 courses per page
+
+      const { courses, totalCourses } = await courseService.getPopulerCoursesInfo(page, limit);
+
+      res.status(200).json({ courses, totalCourses, page, totalPages: Math.ceil(totalCourses / limit) });
+  } catch (error) {
+      next(error);
+  }
+};
+
 const getDraftCourses= async (req,res,next)=>{
   const instructor=req.id
   try {
@@ -91,9 +97,10 @@ const getCourse= async (req, res,next) => {
 };
 const getCalculatedPrice=async(req,res,next)=>{
   const {courseId,totalEnrollments}=req.query
-  console.log(courseId,totalEnrollments)
+  const corporateId=req.id
+  console.log("juju")
   try {
-    const price=await courseService.getCalculatedPrice(courseId,totalEnrollments)
+    const price=await courseService.getCalculatedPrice(corporateId,courseId,totalEnrollments)
     res.status(200).json(price)
   } catch (error) {
     next(error)

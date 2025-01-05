@@ -1,14 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
 import useCategory from '../hooks/useCategory'
 import axios from '../api/axios'
-import Stars from '../components/Stars/Stars'
+
+//local components
+import PopularCourses from '../components/PopularCourses'
+import Pagination from '../components/Pagination/Pagination'
 import Footer from '../components/Footer'
-import logo from '../assets/logo_white.png'
-import MenuIcon from '@mui/icons-material/Menu';
-import CloseIcon from '@mui/icons-material/Close';
-import PeopleIcon from '@mui/icons-material/People';
+
+//external components
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Slider from "react-slick";
+
 //categories icons
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import GTranslateIcon from '@mui/icons-material/GTranslate';
@@ -26,33 +31,47 @@ import CastForEducationIcon from '@mui/icons-material/CastForEducation';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Slider from "react-slick";
-
+//icons
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import logo from '../assets/logo_white.png'
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 
-const Home2 = () => {
+const Home = () => {
     const navigate = useNavigate()
     const categories = useCategory()
-    const { auth, setAuth } = useAuth();
+    const { auth } = useAuth();
 
     const goToCourse = (courseId) => {
         navigate(`/course-preview/${courseId}`);
     };
+
+    const [searchText, setSearchText] = React.useState('');
+
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        navigate(`/courses?search=${encodeURIComponent(searchText)}`);
+    };
+
     const [courses, setCourses] = useState([])
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
+    const fetchCourses = async (page = 1) => {
+        try {
+            const res = await axios.get(`/courses/populer?page=${page}&limit=6`);
+            setCourses(res.data.courses);
+            setTotalPages(res.data.totalPages);
+            setCurrentPage(page);
+        } catch (error) {
+            console.error("Error fetching popular courses:", error);
+        }
+    };
 
     useEffect(() => {
-        const getCourses = async () => {
-            const res = await axios.get("courses/populer");
-            console.log(res.data)
-            setCourses(res.data);
-        };
-
-        getCourses();
-
-    }, [])
+        fetchCourses(); // Fetch the first page on component mount
+    }, []);
 
     const categoryIconMap = {
         "Business & Management": <QueryStatsIcon sx={{ fill: "url(#exampleColors)", fontSize: '3.5rem' }} />,
@@ -116,14 +135,18 @@ const Home2 = () => {
                 breakpoint: 700,
                 settings: {
                     slidesToShow: 2,
-                    slidesToScroll: 2
+                    slidesToScroll: 2,
+                    arrows: false, // Disable arrows
+                    swipe: true,
                 }
             },
             {
                 breakpoint: 480,
                 settings: {
                     slidesToShow: 1,
-                    slidesToScroll: 1
+                    slidesToScroll: 1,
+                    arrows: false, // Disable arrows
+                    swipe: true,
                 }
             }
         ]
@@ -132,6 +155,24 @@ const Home2 = () => {
 
     const [isDivVisible, setIsDivVisible] = useState(false);
     const [toggleList, setToggleList] = useState()
+    const navListRef = useRef(null);
+
+    const handleClickOutside = (event) => {
+        if (navListRef.current && !navListRef.current.contains(event.target)) {
+            setToggleList(false);
+        }
+    };
+
+    useEffect(() => {
+        if (toggleList) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [toggleList]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -154,6 +195,47 @@ const Home2 = () => {
     const handleIconClick = () => {
         setToggleList(!toggleList) // Toggle visibility on small screens
     };
+
+    const [count, setCount] = useState(0);
+    const [hasCounted, setHasCounted] = useState(false); // Prevent re-triggering the animation
+
+    useEffect(() => {
+        const parallaxSection = document.querySelector('.parallax');
+
+        const handleCountUp = () => {
+            const target = 6000;
+            const duration = 1000; // Duration in milliseconds
+            const interval = 10; // Interval between increments
+            const step = target / (duration / interval);
+
+            let currentCount = 2000;
+
+            const countInterval = setInterval(() => {
+                currentCount += step;
+                if (currentCount >= target) {
+                    setCount(target);
+                    clearInterval(countInterval);
+                } else {
+                    setCount(Math.ceil(currentCount));
+                }
+            }, interval);
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting && !hasCounted) {
+                    setHasCounted(true);
+                    handleCountUp();
+                }
+            });
+        });
+
+        if (parallaxSection) observer.observe(parallaxSection);
+
+        return () => {
+            if (parallaxSection) observer.unobserve(parallaxSection);
+        };
+    }, [hasCounted]);
 
     return (
         <div className='home-01'>
@@ -202,10 +284,6 @@ const Home2 = () => {
                                                 <Link to={"/"}>Home</Link>
                                             </li>
                                             <li>
-                                                <Link to="/categories">Categories</Link>
-
-                                            </li>
-                                            <li>
                                                 <Link to={"/courses"}>Courses</Link>
 
                                             </li>
@@ -226,9 +304,9 @@ const Home2 = () => {
                                     }
                                 </div>
                             </div>
-                            {!isDivVisible && toggleList &&
-                                <ul className={`main-nav__list_2 ${toggleList ? 'active' : ''}`}>
-                                    <li onClick={handleIconClick}><CloseIcon /></li>
+                            {!isDivVisible &&
+                                <ul ref={navListRef} className={`main-nav__list_2 ${toggleList ? 'active' : ''}`}>
+                                    <li style={{ color: "gray" }} onClick={handleIconClick}><CloseIcon /></li>
                                     <li>
                                         <Link style={{ color: "#4da7cc" }} to={"/teach-with-us"}>Teach with us</Link>
                                     </li>
@@ -236,39 +314,49 @@ const Home2 = () => {
                                     <li>
                                         <Link style={{ color: "#4da7cc" }} to={"/for-buisness"}>Try Educator for buisness</Link>
                                     </li>
+                                    <hr className='menu-hr' />
                                     <li >
                                         <Link style={{ color: "#a0ce4e" }} to={"/"}>Home</Link>
                                     </li>
 
                                     <li>
-                                        <Link href="events.html">Categories</Link>
-
-                                    </li>
-                                    <li>
-                                        <Link to={"/courses"}>Courses</Link>
+                                        <Link style={{ color: "#4da7cc" }} to={"/courses"}>Courses</Link>
 
                                     </li>
                                     {auth?.accessToken ?
                                         <li>
-                                            <Link to={auth.role === "IndividualTrainee" ? "/ITrainee-dashboard-enrollments" :
+                                            <Link style={{ color: "#4da7cc" }} to={auth.role === "IndividualTrainee" ? "/ITrainee-dashboard-enrollments" :
                                                 auth.role === "CorporateTrainee" ? "" : auth.role === "Corporate" ? "/corporate-dashboard/trainees" : auth.role === "Instructor" ? "/instructor-dashboard/draft-courses" : ""}>Dashboard</Link>
                                         </li>
                                         :
                                         <> <li>
-                                            <Link to={"/sign-in"}>Sign in</Link>
+                                            <Link style={{ color: "#4da7cc" }} to={"/sign-in"}>Sign in</Link>
                                         </li>
                                             <li>
-                                                <Link to={"/sign-up"}>Sign up</Link>
+                                                <Link style={{ color: "#4da7cc" }} to={"/sign-up"}>Sign up</Link>
                                             </li></>
                                     }
                                 </ul>
                             }
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <form class="search-bg" action="./">
-                                        <label class="search-bg__title">Choose From A Range Of <span>Online Courses</span></label>
-                                        <input class="search-bg__text" type="text" name="search-bg-name" placeholder="Search for courses you'd like...." />
-                                        <button class="search-bg__btn" type="button">Search</button>
+                            <div className="row">
+                                <div className="col-lg-12">
+                                    <form className="search-bg" onSubmit={handleSearchSubmit}>
+                                        <label className="search-bg__title">
+                                            Choose From A Range Of <span>Online Courses</span>
+                                        </label>
+                                        <div className='search-bg__small'>
+                                            <input
+                                                className="search-bg__text"
+                                                type="text"
+                                                name="search-bg-name"
+                                                placeholder="Search for courses you'd like...."
+                                                value={searchText}
+                                                onChange={(e) => setSearchText(e.target.value)}
+                                            />
+                                            <button className="search-bg__btn" type="submit">
+                                                Search
+                                            </button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -277,7 +365,7 @@ const Home2 = () => {
                                     <Slider {...settings} className="owl-carousel owl-option-02">
                                         {categories.map((cat) => (
                                             <div className="item" key={cat.name}>
-                                                <Link to={`/category/${cat.name}`} className="owl-option-02__box-01">
+                                                <Link to={`/courses/${cat.name}`} className="owl-option-02__box-01">
                                                     <svg width={0} height={0}>
                                                         <linearGradient id="exampleColors" x1={1} y1={0} x2={1} y2={1} gradientTransform="rotate(45)">
                                                             <stop offset='0%' stopColor="#a0ce4e" />
@@ -349,92 +437,50 @@ const Home2 = () => {
                             </div>
                         </div>
                     </div>
-                    <div class="parallax parallax_01" data-type="background" data-speed="10">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="parallax-content-01">
-                                        <h3 class="parallax-title">Trusted by Over
-                                            <span> 6000+ </span> Students</h3>
-                                        <div class="parallax-text">
-                                            <p>We have a fully qualified and very well educated teaching staff, continuous student counseling, and a very effective and enthusiastic student support staff. </p>
+                    <div className="parallax parallax_01" data-type="background" data-speed="10">
+                        <div className="container">
+                            <div className="row">
+                                <div className="col-lg-12">
+                                    <div className="parallax-content-01">
+                                        <h3 className="parallax-title">
+                                            Trusted by Over <span>{count.toLocaleString()}+</span> Students
+                                        </h3>
+                                        <div className="parallax-text">
+                                            <p>
+                                                We have a fully qualified and very well educated teaching staff,
+                                                continuous student counseling, and a very effective and enthusiastic
+                                                student support staff.
+                                            </p>
                                         </div>
-                                        <Link href="#" class="parallax-btn">get started</Link>
+                                        <Link to="sign-up" className="parallax-btn">
+                                            Create Account
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="content-box-01 padding-top-93">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-lg-12 text-center">
-                                    <h3 class="title-02 title-02--mr-01">Our Popular
-                                        <span> Courses</span>
-                                    </h3>
-                                    <p class="subtitle-01">Discover our top-rated courses, chosen for their high enrollments and excellent ratings. Dive into engaging content and enhance your skills with ease!</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="content-box-01 padding-bottom-100">
-                        <div className="row">
-                            <div class="col-lg-12">
-                                <ul className="product-list">
-                                    {courses.length > 0 && courses.map(course => {
-                                        const isDiscountValid = course?.discount?.quantity > 0 && new Date(course?.discount?.discountEnd) > new Date();
-                                        const discountedPrice = isDiscountValid
-                                            ? (course.price - (course.price * course.discount.quantity / 100).toFixed(2))
-                                            : null;
-                                        const daysLeft = isDiscountValid
-                                            ? Math.ceil((new Date(course.discount.discountEnd) - new Date()) / (1000 * 60 * 60 * 24))
-                                            : null;
-                                        return (
-                                            <li className="product-list__item" key={course.id} onClick={() => goToCourse(course._id)}>
-                                                <img src={course.thumbnail} alt={course.title} />
-                                                <div className="product-list__content">
-                                                    <Link className="product-list__category" href="#">{course.subject}</Link>
-                                                    <h3 className="product-list__title">
-                                                        {course.title}
-                                                    </h3>
-
-                                                    <p className="product-list__info-piece"><Stars value={course.avgRating} number={course.ratings.length}></Stars></p>
-                                                    {isDiscountValid ? (
-                                                        <>
-                                                            <p className="product-list__info-piece flex-row"><span className="flex-row"><span>${discountedPrice}</span><span style={{ textDecoration: 'line-through' }}>${course.price.toFixed(2)}</span> </span><span>{daysLeft} days left</span></p>
-                                                        </>
-                                                    ) : (
-                                                        <p className="product-list__info-piece">${course.price.toFixed(2)}</p>
-                                                    )}
-                                                </div>
-                                                <div className="product-list__item-info" style={{ textAlign: "center" }}>
-                                                    <p className="product-list__info-piece"><PeopleIcon /><span>   </span>{course.enrolledStudents} Students</p>
-                                                </div>
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-12 text-center">
-                                    <Link href="courses.html" class="btn-01">See more</Link>
-                                </div>
-                            </div>
-                        </div>
+                    <div className='margin-top-80'>
+                        <PopularCourses courses={courses} goToCourse={goToCourse} />
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={(page) => fetchCourses(page)}
+                        />
                     </div>
                     <div class="content-box-01 padding-top-93 padding-bottom-63">
                         <div class="container">
                             <div class="row padding-bottom-15">
                                 <div class="col-lg-12 text-center">
-                                    <h3 class="title-05">What makes Us
+                                    <h3 class="title-02 title-02--mr-01">What makes Us
                                         <span> Different</span>
                                     </h3>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-6 col-md-6 col-lg-12">
+                                <div class="col-lg-12">
                                     <div class="news-info">
-                                    <div class="news-info__post">
+                                        <div class="news-info__post">
                                             <div class="news-info__date-block">
                                                 <p>1</p>
                                             </div>
@@ -512,4 +558,4 @@ const Home2 = () => {
     )
 }
 
-export default Home2
+export default Home

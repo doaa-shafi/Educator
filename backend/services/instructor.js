@@ -2,7 +2,7 @@ const Instructor = require("../models/users/instructor");
 const User = require("../models/users/user");
 const Course = require("../models/courses/course");
 const bcrypt = require("bcrypt");
-const mongoose=require('mongoose')
+const mongoose = require("mongoose");
 const { ConflictError } = require("../helpers/errors");
 const {
   sendInstructorRequestEmail,
@@ -88,15 +88,70 @@ class instructorService {
         },
       ]);
     } else if (includedCourses === "open") {
-      courses = await Course.find({
-        instructor: instructorId,
-        status: "published",
-      });
+      courses = await Course.aggregate([
+        {
+          $match: {
+            instructor: new mongoose.Types.ObjectId(instructorId), // Match courses for the given instructor
+            status: "published", // Only include published courses
+          },
+        },
+        {
+          $lookup: {
+            from: "payments", // Name of the Payment collection
+            localField: "_id", // Match Course `_id`
+            foreignField: "courseId", // Match Payment `courseId`
+            as: "payments", // Output matched payments in this field
+          },
+        },
+        {
+          $addFields: {
+            totalEarnings: {
+              $sum: "$payments.amount", // Sum the `amount` field from the matched payments
+            },
+          },
+        },
+      ]);
     } else if (includedCourses === "closed") {
-      courses = await Course.find({
-        instructor: instructorId,
-        status: "closed",
-      });
+      courses = await Course.aggregate([
+        {
+          $match: {
+            instructor: new mongoose.Types.ObjectId(instructorId), // Match courses for the given instructor
+            status: "closed", // Only include published courses
+          },
+        },
+        {
+          $lookup: {
+            from: "payments", // Name of the Payment collection
+            localField: "_id", // Match Course `_id`
+            foreignField: "courseId", // Match Payment `courseId`
+            as: "payments", // Output matched payments in this field
+          },
+        },
+        {
+          $addFields: {
+            totalEarnings: {
+              $sum: "$payments.amount", // Sum the `amount` field from the matched payments
+            },
+          },
+        },
+      ]);
+    } else if (includedCourses === "data") {
+      const data = await Course.aggregate([
+        {
+          $match: {
+            instructor: new mongoose.Types.ObjectId(instructorId),
+            status: { $in: ["published", "closed"] }, // Match both open and closed courses
+          },
+        },
+        {
+          $group: {
+            _id: null, // Group all courses together
+            totalCourses: { $sum: 1 }, // Count total courses
+            totalEnrollments: { $sum: "$enrolledStudents" }, // Sum enrollments across all courses
+          },
+        },
+      ]);
+      courses = data[0] || { totalCourses: 0, totalEnrollments: 0 };
     } else {
       throw new Error("Enter correct course status");
     }
@@ -107,8 +162,8 @@ class instructorService {
   async getInstructor(id) {
     return await Instructor.findById(id);
   }
-  async getInstructorWallet(id){
-    return await Instructor.findById(id).select({wallet:1})
+  async getInstructorWallet(id) {
+    return await Instructor.findById(id).select({ wallet: 1 });
   }
   async updateInstructor(instructorId, updateData) {
     return await Instructor.findByIdAndUpdate(instructorId, updateData, {

@@ -1,5 +1,5 @@
 const express = require("express")
-const {getSignedInCorporate,getSignedInCorporateWithTrainees, addCorporate ,registerToCourse} = require("../controllers/corporate")
+const {getSignedInCorporate,getSignedInCorporateWithTrainees, addCorporate ,renew,registerToCourse} = require("../controllers/corporate")
 const verifyJWT  = require("../middlewares/verifyJWT")
 
 
@@ -11,6 +11,7 @@ router.get("/trainees",verifyJWT, getSignedInCorporateWithTrainees);
 router.post("/", addCorporate);
 
 router.patch("/courses",verifyJWT,registerToCourse)
+router.patch("/renew", verifyJWT,renew);
 
 
 module.exports = router;

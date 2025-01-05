@@ -24,14 +24,19 @@ const Corporate = User.discriminator('Corporate',new mongoose.Schema({
         enum: ['Standard', 'Premium'],
         required: true,
     },
-    // status: {
-    //     type: String,
-    //     enum: ['Active', 'Pending'],
-    // },
-    // stripeCustomerId: {
-    //     type: String,
-    //     required: true,
-    // },
+    status: {
+        type: String,
+        enum: ['Active', 'Pending'],
+        default: 'Pending', // Default to 'Pending' until payment is confirmed
+    },
+    stripeCustomerId: {
+        type: String,
+        required: true, // Ensure this field is provided
+    },
+    stripeSubscriptionId: {
+        type: String,
+        required: true, // Ensure this field is provided
+    },
     // endDate: {
     //     type: Date,
     //     required: true,

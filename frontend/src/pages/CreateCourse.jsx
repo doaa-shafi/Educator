@@ -37,12 +37,12 @@ const CreateCourse = () => {
     const [priceTiers, setPriceTiers] = useState([]);
     const [exchangeRates, setExchangeRates] = useState({});
 
-    const [unSavedChanges, setUnSavedChanges] = useState(0)
+    const [unSavedChanges, setUnSavedChanges] = useState(false)
     const [previewVideoChanged, setPreviewVideoChanged] = useState(false)
     
     useEffect(() => {
         const handleBeforeUnload = (event) => {
-            if (unSavedChanges > 0) {
+            if (unSavedChanges) {
                 const confirmationMessage = "You have unsaved changes. Are you sure you want to leave?";
                 event.preventDefault();
                 event.returnValue = confirmationMessage; // Only a generic message is shown by modern browsers
@@ -97,7 +97,7 @@ const CreateCourse = () => {
             ...prevCourse,
             requirements: updatedReqInputs,
         }));
-        setUnSavedChanges(unSavedChanges + 1);
+        setUnSavedChanges(true);
     };
 
     const handleReqInputChange = (index, event) => {
@@ -108,7 +108,7 @@ const CreateCourse = () => {
             ...prevCourse,
             requirements: values,
         }));
-        setUnSavedChanges(unSavedChanges + 1)
+        setUnSavedChanges(true)
     };
 
     const handleAddOutInput = () => {
@@ -122,7 +122,7 @@ const CreateCourse = () => {
             ...prevCourse,
             learnings: updatedOutInputs,
         }));
-        setUnSavedChanges(unSavedChanges + 1);
+        setUnSavedChanges(true);
     };
 
     const handleOutInputChange = (index, event) => {
@@ -133,7 +133,7 @@ const CreateCourse = () => {
             ...prevCourse,
             learnings: values,
         }));
-        setUnSavedChanges(unSavedChanges + 1)
+        setUnSavedChanges(true)
     };
 
 
@@ -162,7 +162,7 @@ const CreateCourse = () => {
             setPreviewVideoChanged(true)
         }
         console.log(course);
-        setUnSavedChanges(unSavedChanges + 1)
+        setUnSavedChanges(true)
     };
 
 
@@ -186,7 +186,7 @@ const CreateCourse = () => {
             }
         });
         console.log(course)
-        setUnSavedChanges(unSavedChanges + 1)
+        setUnSavedChanges(true)
     };
 
     const handlePriceChange = (value) => {
@@ -204,7 +204,7 @@ const CreateCourse = () => {
         }
 
         console.log(course)
-        setUnSavedChanges(unSavedChanges + 1)
+        setUnSavedChanges(true)
     };
 
 
@@ -434,6 +434,7 @@ const CreateCourse = () => {
             const response = await axiosPrivate.post(`/lessons/create-lesson`, { courseId, title: newLesson });
             setShowInput(false)
             setLessonAdded(true)
+            setNewLesson("")
         } catch (error) {
             console.log(error)
             showError(error.response.data.error)
@@ -597,7 +598,7 @@ const CreateCourse = () => {
                                 }
                             </div>
                             <button class="header-btn" onClick={saveCourse}>
-                                {unSavedChanges > 0 && <FiberManualRecordIcon />}
+                                {unSavedChanges===true && <FiberManualRecordIcon />}
                                 save
                             </button>
                         </div>
@@ -833,8 +834,8 @@ const CreateCourse = () => {
                             <div class="col-lg-4" id="sidebar">
                                 <div id="contactInfoContainer" class="theiaStickySidebar">
                                     <div class="contact-box">
-                                        <h2 className={unSavedChanges > 0 ? 'error' : ''}>{unSavedChanges > 0 && <FiberManualRecordIcon />} {unSavedChanges} Unsaved Changes</h2>
-                                        <button className={unSavedChanges > 0 ? 'btn-05' : 'btn-06'} onClick={saveCourse}>Save</button>
+                                        <h2 className={unSavedChanges===true ? 'error' : ''}>{unSavedChanges===true  && <FiberManualRecordIcon />} {unSavedChanges?"There are Unsaved Changes":"No Unsaved Changes"}</h2>
+                                        <button className={unSavedChanges===true ? 'btn-05' : 'btn-06'} onClick={saveCourse}>Save</button>
                                     </div>
                                     <div class="contact-box">
                                         <i class="icon icon-envelope"></i>

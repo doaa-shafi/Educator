@@ -127,10 +127,10 @@ const InstructorDashBoardLandingPage = () => {
     return (
         <div class='teach-with-us'>
             <div class="wrapp-content">
-                <header className="wrapp-header">
+                <header className="wrapp-header dashboard-header">
                     <div class="main-nav">
                         <div class="container">
-                            <div className="flex-row">
+                            <div className="flex-row padding-around">
                                 <Link to="/" class="logo">
                                     <img src={logo} alt="" />
                                 </Link>
@@ -153,8 +153,8 @@ const InstructorDashBoardLandingPage = () => {
                                         </li>
                                     </ul>
                                 }
-                                <div className="flex-column">
-                                    {!isDivVisible &&
+                                {!isDivVisible &&
+                                    <div className="flex-column">
                                         <ul className="main-nav__list">
                                             <li class="active">
                                                 <Link to={'/instructor-dashboard/landing-page'}>Landing Page</Link>
@@ -163,25 +163,24 @@ const InstructorDashBoardLandingPage = () => {
                                                 {toggleList ? <ExpandLessIcon onClick={handleIconClick} /> : <ExpandMoreIcon onClick={handleIconClick} />}
                                             </li>
                                         </ul>
-
-                                    }
-                                    {!isDivVisible && toggleList &&
-                                        <ul className={`main-nav__list_3 ${toggleList ? 'active' : ''}`}>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/draft-courses'}>Draft Courses</Link>
-                                            </li>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/open-courses'}>Open Courses</Link>
-                                            </li>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/closed-courses'}>Closed Courses</Link>
-                                            </li>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/wallet'}>Wallet</Link>
-                                            </li>
-                                        </ul>
-                                    }
-                                </div>
+                                        {toggleList &&
+                                            <ul className={`main-nav__list_3 ${toggleList ? 'active' : ''}`}>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/draft-courses'}>Draft Courses</Link>
+                                                </li>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/open-courses'}>Open Courses</Link>
+                                                </li>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/closed-courses'}>Closed Courses</Link>
+                                                </li>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/wallet'}>Wallet</Link>
+                                                </li>
+                                            </ul>
+                                        }
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>

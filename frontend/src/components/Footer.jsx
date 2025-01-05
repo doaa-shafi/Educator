@@ -13,64 +13,51 @@ const Footer = () => {
 			<div className="footer-box-01">
 				<div className="container">
 					<div className="row">
-						<div className="col-sm-3 col-md-3 col-lg-3">
+						<div className="col-sm-12 col-md-6 col-lg-3">
 							<Link to="/" className="footer-logo">
 								<img src={logo} alt="" className='logo'></img>
 							</Link>
-							<ul classNameName="widget-contact">
-								<li>
-									<h4 className="widget-contact__title">Office Hours:</h4>
-									<p className="widget-contact__text">8:00am - 5:00pm</p>
-								</li>
+							<ul className="widget-contact">
 								<li>
 									<h4 className="widget-contact__title">Email:</h4>
 									<p className="widget-contact__text">
-										<a className="widget-contact__text-email" href="mailto:thesmartedu@edu.com">thesmartedu@edu.com</a>
+										<a className="widget-contact__text-email" href="mailto:support@educatorplatform.com">support@educatorplatform.com</a>
 									</p>
 								</li>
 							</ul>
 						</div>
-						<div className="col-sm-3 col-md-3 col-lg-3">
+						<div className="col-sm-12 col-md-6 col-lg-3">
 							<div className="widget-link">
 								<h3 className="widget-title">Explore</h3>
 								<ul className="widget-list">
-									<li>
-										<a href="#">Around the World</a>
-									</li>
-									<li>
-										<a href="#">News Network</a>
-									</li>
-									<li>
-										<a href="#">Visitor Information</a>
-									</li>
-									<li>
-										<a href="#">Social Media</a>
-									</li>
-									<li>
-										<a href="#">Our Campuses</a>
-									</li>
 									<li>
 										<a href="#">For Instructors</a>
 									</li>
 									<li>
 										<a href="#">For Buisness</a>
 									</li>
+									<li>
+										<a href="#">Courses</a>
+									</li>
+									<li>
+										<a href="#">Testimonials</a>
+									</li>
 								</ul>
 							</div>
 						</div>
-						<div className="col-sm-3 col-md-3 col-lg-3">
+						<div className="col-sm-12 col-md-6 col-lg-3">
 							<div className="widget-link">
 								<h3 className="widget-title">Categories</h3>
 								<ul className="widget-list">
 									{firstHalf.map((cat) => (
 										<li>
-											<Link>{cat.name}</Link>
+											<Link to={`/courses/${cat.name}`}>{cat.name}</Link>
 										</li>
 									))}
 								</ul>
 							</div>
 						</div>
-						<div className="col-sm-3 col-md-3 col-lg-3">
+						<div className="col-sm-12 col-md-6 col-lg-3">
 							<div className="widget-link">
 								<h3 className="widget-title">Categories</h3>
 								<ul className="widget-list">

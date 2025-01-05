@@ -81,10 +81,10 @@ const InstructorDashBoardOpenedCourses = () => {
     return (
         <div class="teach-with-us">
             <div class="wrapp-content">
-                <div className="wrapp-header">
+                <div className="wrapp-header dashboard-header">
                     <div class="main-nav">
                         <div class="container">
-                            <div className="flex-row">
+                            <div className="flex-row padding-around">
                                 <Link to="/" class="logo">
                                     <img src={logo} alt="" />
                                 </Link>
@@ -107,8 +107,8 @@ const InstructorDashBoardOpenedCourses = () => {
                                         </li>
                                     </ul>
                                 }
-                                <div className="flex-column">
-                                    {!isDivVisible &&
+                                {!isDivVisible &&
+                                    <div className="flex-column">
                                         <ul className="main-nav__list">
                                             <li class="active">
                                                 <Link to={'/instructor-dashboard/open-courses'}>Open Courses</Link>
@@ -117,26 +117,25 @@ const InstructorDashBoardOpenedCourses = () => {
                                                 {toggleList ? <ExpandLessIcon onClick={handleIconClick} /> : <ExpandMoreIcon onClick={handleIconClick} />}
                                             </li>
                                         </ul>
+                                        {toggleList &&
+                                            <ul className={`main-nav__list_3 ${toggleList ? 'active' : ''}`}>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/draft-courses'}>Draft Courses</Link>
+                                                </li>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/closed-courses'}>Closed Courses</Link>
+                                                </li>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/wallet'}>Wallet</Link>
+                                                </li>
+                                                <li>
+                                                    <Link to={'/instructor-dashboard/landing-page'}>Landing page</Link>
+                                                </li>
 
-                                    }
-                                    {!isDivVisible && toggleList &&
-                                        <ul className={`main-nav__list_3 ${toggleList ? 'active' : ''}`}>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/draft-courses'}>Draft Courses</Link>
-                                            </li>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/closed-courses'}>Closed Courses</Link>
-                                            </li>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/wallet'}>Wallet</Link>
-                                            </li>
-                                            <li>
-                                                <Link to={'/instructor-dashboard/landing-page'}>Landing page</Link>
-                                            </li>
-
-                                        </ul>
-                                    }
-                                </div>
+                                            </ul>
+                                        }
+                                    </div>
+                                }
 
                             </div>
                         </div>
@@ -192,10 +191,10 @@ const InstructorDashBoardOpenedCourses = () => {
                             </div>}
                     </div>
                     <div className="margin-top-80"></div>
-                    <div class="row dashboard-row">
+                    <div class="row dashboard-row margin-bottom-97">
+                        <h4 class="card-title overflow-hidden">Open Courses</h4>
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title overflow-hidden">Open Courses</h4>
                                 <div class="table-responsive">
                                     <table class="table table-centered table-hover table-xl mb-0" id="recent-orders">
                                         <thead>
@@ -220,7 +219,7 @@ const InstructorDashBoardOpenedCourses = () => {
                                                         <Stars value={course.avgRating} number={course.ratings.length}></Stars>
                                                     </td>
                                                     <td class="text-truncate"><h5>{course.enrolledStudents}</h5></td>
-                                                    <td class="text-truncate"><h5>$ 1200.00</h5></td>
+                                                    <td class="text-truncate"><h5>$ {course.totalEarnings}</h5></td>
                                                 </tr>))}
                                         </tbody>
                                     </table>

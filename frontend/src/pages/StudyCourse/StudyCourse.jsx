@@ -35,6 +35,8 @@ const StudyPage = () => {
                 console.log(res.data)
                 setEnrollment(res.data.enrollment);
                 setLessons(res.data.lessons);
+                setSelectedLesson(res.data.lessons[0])
+                setSelectedItem({...res.data.lessons[0].items[0],itemIndex:0})
             } catch (error) {
                 console.log(error);
             }
@@ -174,7 +176,7 @@ const StudyPage = () => {
                     {alertMessage}
                 </div>
             )}
-            <div class="sub-header" id="progress">
+            <div class="sub-header sticky" id="progress">
                 <div class="container">
                     <div className="flex-row">
                         <div className="flex-row">
@@ -212,39 +214,8 @@ const StudyPage = () => {
                     </div>
                 </div>
             </div>
-            <div className="contact">
-                <div class="col-lg-3" id="sidebar">
-                    <div id="contactInfoContainer" class="theiaStickySidebar">
-                        {lessons.map((lesson, index) => (
-                            <div key={index} className="lesson">
-                                <h4 className="lesson-title" onClick={() => toggleLesson(index)}>
-                                    {lesson.title}
-                                    <ArrowDropDownIcon />
-                                </h4>
-                                {expandedLesson === index && (
-                                    <ol className="items-list">
-                                        {lesson.items.map((item, itemIndex) => (
-                                            <li
-                                                key={itemIndex}
-                                                className="lessons-nav-item"
-                                                onClick={() => handleSelectItem(lesson, item, itemIndex)}
-                                            >
-                                                {item.title}
-                                            </li>
-                                        ))}
-                                        <div
-                                            className="quiz-link"
-                                            onClick={() => { handleSelectItem(lesson, { type: 'quiz', title: 'Quiz', quiz: lesson.quiz }); setQuizChanged(!quizChanged) }}
-                                        >
-                                            Quiz
-                                        </div>
-                                    </ol>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <div className="col-lg-9 content-display">
+            <div >
+                <div className="content-display margin-bottom-20">
                     <div className="content-window">
                         {selectedItem ? (
                             selectedItem.type === 1 ? (
@@ -299,7 +270,7 @@ const StudyPage = () => {
                             <div className="placeholder">Select a lesson item to view the content.</div>
                         )}
                     </div>
-                    <div className="tabs">
+                    {/* <div className="tabs">
                         <button className="tab-button">Questions</button>
                         <button className="tab-button">Notes</button>
                         {selectedItem && selectedItem.type !== 'quiz' && (
@@ -307,8 +278,40 @@ const StudyPage = () => {
                                 Mark as Completed
                             </button>
                         )}
+                    </div> */}
+                </div>
+                <div className='row margin-top-10'>
+                    <div id="contactInfoContainer" class="theiaStickySidebar margin-bottom-60 ">
+                        {lessons.map((lesson, index) => (
+                            <div key={index} className="lesson">
+                                <h4 className="lesson-title" onClick={() => toggleLesson(index)}>
+                                    {lesson.title}
+                                    <ArrowDropDownIcon />
+                                </h4>
+                                {expandedLesson === index && (
+                                    <ol className="items-list">
+                                        {lesson.items.map((item, itemIndex) => (
+                                            <li
+                                                key={itemIndex}
+                                                className="lessons-nav-item"
+                                                onClick={() => handleSelectItem(lesson, item, itemIndex)}
+                                            >
+                                                {item.title}
+                                            </li>
+                                        ))}
+                                        <div
+                                            className="quiz-link"
+                                            onClick={() => { handleSelectItem(lesson, { type: 'quiz', title: 'Quiz', quiz: lesson.quiz }); setQuizChanged(!quizChanged) }}
+                                        >
+                                            Quiz
+                                        </div>
+                                    </ol>
+                                )}
+                            </div>
+                        ))}
                     </div>
                 </div>
+
             </div>
         </div>
     );

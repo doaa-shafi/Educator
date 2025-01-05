@@ -7,9 +7,11 @@ const mongoose = require("mongoose");
 const stripe = require("stripe")(process.env.STRIPE_S_KEY);
 
 class individualTraineeService {
-  async registerToCourse(traineeId, courseId, token) {
+  async registerToCourse(traineeId, courseId, paymentMethodId) {
     const session = await mongoose.startSession(); // Start a session
     session.startTransaction(); // Start the transaction
+
+    let paymentIntent = null;
 
     try {
       // Step 1: Add the enrollment
@@ -29,7 +31,12 @@ class individualTraineeService {
       );
 
       // Step 3: Process the payment
-      await this.pay(courseId, traineeId, token, session); // Pass the session
+      paymentIntent = await this.pay(
+        courseId,
+        traineeId,
+        paymentMethodId,
+        session
+      );
 
       // Commit the transaction if everything is successful
       await session.commitTransaction();
@@ -41,51 +48,36 @@ class individualTraineeService {
       await session.abortTransaction();
       session.endSession();
 
+      // Refund the payment if it was processed
+      if (paymentIntent && paymentIntent.status === "succeeded") {
+        await stripe.refunds.create({
+          payment_intent: paymentIntent.id,
+          reason: "requested_by_customer",
+        });
+      }
+
       throw error; // Rethrow the error
     }
   }
 
   //pay for a course
-  async pay(courseId, traineeId, token, session) {
-    let charge=null
+  async pay(courseId, traineeId, paymentMethodId, session) {
+    let paymentIntent = null;
+
     try {
       const course = await Course.findById(courseId).session(session); // Use session
       const trainee = await IndividualTrainee.findById(traineeId).session(
         session
-      ); // Use session
+      );
       const wallet = trainee.wallet;
       const price = course.price;
       const instructor = course.instructor;
 
-      await Instructor.findByIdAndUpdate(instructor, {
-        $inc: { wallet: 0.7 * price },
-      }).session(session); // Use session
-
-      if (wallet === 0) {
-        charge = await stripe.charges.create({
-          amount: price * 100, // Stripe expects the amount in cents
-          currency: "usd",
-          description: "Course payment",
-          source: token.id,
-        });
-        await Payment.create(
-          [
-            {
-              payerId: traineeId,
-              receiverId:course.instructor,
-              courseId: courseId,
-              amount: price*0.7,
-              paymentId: charge.id,
-            },
-          ],
-          { session }
-        );
-      } else if (wallet >= price) {
+      if (wallet >= price) {
+        // Pay fully from wallet
         await IndividualTrainee.findByIdAndUpdate(
           traineeId,
-          {
-            wallet: wallet - price,
-          },
+          { wallet: wallet - price },
           { session }
         );
 
@@ -93,47 +85,62 @@ class individualTraineeService {
           [
             {
               payerId: traineeId,
-              receiverId:course.instructor,
+              receiverId: instructor,
               courseId: courseId,
-              amount: price*0.7,
+              amount: price * 0.7,
             },
           ],
           { session }
         );
       } else {
-        const newPrice = price - wallet;
-        charge = await stripe.charges.create({
-          amount: newPrice * 100, // Stripe expects the amount in cents
+        // Partial wallet + payment intent
+        const remainingAmount = price - wallet;
+
+        if (wallet > 0) {
+          await IndividualTrainee.findByIdAndUpdate(
+            traineeId,
+            { wallet: 0 },
+            { session }
+          );
+        }
+
+        // Create a payment intent for the remaining amount
+        paymentIntent = await stripe.paymentIntents.create({
+          amount: remainingAmount * 100, // Convert to cents
           currency: "usd",
-          description: "Course payment",
-          source: token.id,
+          payment_method: paymentMethodId,
+          confirm: true,
+          automatic_payment_methods: {
+            enabled: true,
+            allow_redirects: "never", // No redirects
+          },
         });
 
-        await IndividualTrainee.findByIdAndUpdate(
-          traineeId,
-          {
-            wallet: 0,
-          },
-          { session }
-        );
-
+        // Log the payment in the database
         await Payment.create(
           [
             {
               payerId: traineeId,
-              receiverId:course.instructor,
+              receiverId: instructor,
               courseId: courseId,
-              amount: price*0.7,
-              paymentId: charge.id,
+              amount: price * 0.7,
+              paymentId: paymentIntent.id,
             },
           ],
           { session }
         );
       }
+
+      return paymentIntent;
     } catch (error) {
-      if (charge!==null) {
-        await stripe.refunds.create({ charge: charge.id });
+      // If any error occurs during the payment, refund if necessary
+      if (paymentIntent && paymentIntent.status === "succeeded") {
+        await stripe.refunds.create({
+          payment_intent: paymentIntent.id,
+          reason: "requested_by_customer",
+        });
       }
+
       throw error;
     }
   }

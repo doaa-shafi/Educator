@@ -77,7 +77,7 @@ const videoSchema = Joi.object({
     "string.empty": `Preview video URL cannot be empty`,
     "any.required": `Preview video URL is required`,
   }),
-  title: Joi.string().alphanum().min(3).max(30).required().messages({
+  title: Joi.string().min(3).max(30).required().messages({
     "string.base": `Video Title should be a type of 'text'`,
     "string.empty": `Video Title cannot be empty`,
     "string.min": `Video Title should have a minimum length of {#limit}`,
@@ -87,7 +87,7 @@ const videoSchema = Joi.object({
 });
 
 const lectureSchema = Joi.object({
-  title: Joi.string().alphanum().min(3).max(30).required().messages({
+  title: Joi.string().min(3).max(30).required().messages({
     "string.base": `Lecture Title should be a type of 'text'`,
     "string.empty": `Lecture Title cannot be empty`,
     "string.min": `Lecture Title should have a minimum length of {#limit}`,

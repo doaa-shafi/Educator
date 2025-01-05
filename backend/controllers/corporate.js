@@ -41,26 +41,45 @@ const addCorporate = async (req, res,next) => {// pay
     next(error)
   }  
 };
+const renew = async (req, res,next) => {// pay
+  const { paymentMethodId} = req.body;
+  const corporateId=req.id;
+  try {  
+    authorize(req.role,RESOURSES_NAMES.Corporate, [ACTIONS_NAMES.UPDATE_OWN],true)
+    const corporate=await corporateService.renew(corporateId,paymentMethodId)
+    res.status(201).json(corporate);
+  } catch (error) {
+    next(error)
+  }  
+};
 const registerToCourse = async (req, res, next) => {
-  const { courseId,totalEnrollments, token } = req.body;
+  const { courseId, totalEnrollments, paymentMethodId } = req.body;
   const corporateId = req.id;
+
   try {
-    authorize(req.role, RESOURSES_NAMES.Corporate, [ACTIONS_NAMES.UPDATE_OWN],true);
-    const updatedTrainee = await corporateService.registerToCourse(
+    // Authorization
+    authorize(req.role, RESOURSES_NAMES.Corporate, [ACTIONS_NAMES.UPDATE_OWN], true);
+
+    // Call the service method
+    const updatedCorporate = await corporateService.registerToCourse(
       corporateId,
       courseId,
       totalEnrollments,
-      token
+      paymentMethodId
     );
-    res.status(200).json(updatedTrainee);
+
+    // Respond with updated corporate data
+    res.status(200).json(updatedCorporate);
   } catch (error) {
     next(error);
   }
 };
 
+
 module.exports = {
   getSignedInCorporate,
   getSignedInCorporateWithTrainees,
   addCorporate,
-  registerToCourse
+  registerToCourse,
+  renew
 };

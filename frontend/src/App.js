@@ -10,7 +10,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import TeachWithUs from "./pages/TeachWithUs";
 import Enterprise from "./pages/Enterprise/Enterprise";
-import AboutCourse from "./pages/AboutCourse";
+import AboutCourse from "./pages/AboutCourse2";
 import Courses from './pages/Courses'
 //instructor dashboard
 import InstructorDashBoardDraftCourses from "./pages/InstructorDashBoardDraftCourses";
@@ -33,7 +33,7 @@ import CorporateDashBoardCourses from "./pages/CorporateDashBoardCourses";
 
 import InstructorCoursePreview from "./pages/InstructorCoursePreview";
 import InstructorLandingPage from "./pages/InstructorLandingPage";
-import Categories from "./pages/Categories";
+
 const stripePromise = loadStripe('pk_test_51QHO02DO3byePzbJj26959Nt4iMfqcb4cjCpwlEuQqUCrPMdaMVqa2BLhx0zgNHVbXIyxEMCq4iqHFlZ6i3VbDk100GIhfxyR6');
 
 
@@ -48,8 +48,7 @@ function App() {
         <Route path="sign-in" element={<Login />} />
         <Route path="sign-up" element={<SignUp />} />
         <Route path="/course-preview/:id" element={<AboutCourse />} />
-        <Route path="/courses" element={<Courses />} />
-        <Route path="/categories" element={<Categories />} />
+        <Route path="/courses/:category?" element={<Courses />} />
         <Route path="/instructor/:id" element={<InstructorLandingPage />} />
         <Route path="/course/:id" element={<StudyPage />} />
         <Route

@@ -111,7 +111,7 @@ class corporateTraineeService {
     if (!corporate) throw new Error("Corporate not found.");
 
     const count = await CorporateTrainee.countDocuments({
-      corporate: mongoose.Types.ObjectId(corporateId),
+      corporate: new mongoose.Types.ObjectId(corporateId),
     });
 
     if (corporate.plan === "Standard" && count === 20) {

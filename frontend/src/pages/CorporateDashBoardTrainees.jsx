@@ -249,10 +249,10 @@ const CorporateDashBoardTrainees = () => {
                 </div>
             </Modal>
             <div class="wrapp-content">
-                <header className="wrapp-header">
+                <header className="wrapp-header dashboard-header">
                     <div class="main-nav">
                         <div class="container">
-                            <div className="flex-row">
+                            <div className="flex-row padding-around">
                                 <Link to="/" class="logo">
                                     <img src={logo} alt="" />
                                 </Link>
@@ -269,8 +269,9 @@ const CorporateDashBoardTrainees = () => {
                                         </li>
                                     </ul>
                                 }
-                                <div className="flex-column">
-                                    {!isDivVisible &&
+                                {!isDivVisible &&
+                                    <div className="flex-column">
+
                                         <ul className="main-nav__list">
                                             <li class="active">
                                                 <Link to={'/corporate-dashboard/trainees'}>Trainees</Link>
@@ -280,24 +281,32 @@ const CorporateDashBoardTrainees = () => {
                                             </li>
                                         </ul>
 
-                                    }
-                                    {!isDivVisible && toggleList &&
-                                        <ul className={`main-nav__list_3 ${toggleList ? 'active' : ''}`}>
-                                            <li>
-                                                <Link to={'/corporate-dashboard/courses'}>Courses Registry</Link>
-                                            </li>
-                                            <li>
-                                                <Link to={'/corporate-dashboard/plan&payment'}>Plan & Payment</Link>
-                                            </li>
-                                        </ul>
-                                    }
-                                </div>
+
+                                        {toggleList &&
+                                            <ul className={`main-nav__list_3 ${toggleList ? 'active' : ''}`}>
+                                                <li>
+                                                    <Link to={'/corporate-dashboard/courses'}>Courses Registry</Link>
+                                                </li>
+                                                <li>
+                                                    <Link to={'/corporate-dashboard/plan&payment'}>Plan & Payment</Link>
+                                                </li>
+                                            </ul>
+                                        }
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
                 </header>
                 <main class="content-row">
-                    <div class="container margin-top-40">
+                    <div class="container margin-top-20">
+                        {corporate?.status === "Pending" &&
+                            <div className="row error-02 margin-bottom-20">
+                                <p>
+                                    Your corporate account is currently pending due to a subscription renewal failure. Trainees cannot access their courses, and you are unable to add new trainees until the subscription is renewed successfully.
+                                </p>
+                            </div>
+                        }
                         <div class="row dashboard-row">
                             <div className="col-lg-6 col-md-12 margin-bottom-20">
                                 <div class="dashboard-card">
@@ -333,14 +342,21 @@ const CorporateDashBoardTrainees = () => {
                             </div>
                         </div>
                     </div>
-                    <div className='button-row'>
-                        <button class="btn-04" onClick={() => setShow(true)}>Add New Trainee</button>
+                    <div className="button-row">
+                        <button
+                            className="btn-04"
+                            onClick={() => setShow(true)}
+                            disabled={corporate?.status === "Pending"} // Disable the button if the status is "Pending"
+                        >
+                            Add New Trainee
+                        </button>
                     </div>
                     <div class="container">
                         <div class="row dashboard-row margin-bottom-97">
+                            <h3 className="card-title ">Trainees</h3>
                             <div className="card">
                                 <div className="card-body">
-                                    <h4 className="card-title overflow-hidden">Trainees</h4>
+
                                     <div className="table-responsive">
                                         <table className="table table-centered table-hover table-xl mb-0" id="recent-orders">
                                             <thead>
@@ -368,7 +384,7 @@ const CorporateDashBoardTrainees = () => {
                                                 })}
                                             </tbody>
                                         </table>
-                                        {trainees?.length === 0 && <div className='no-data'>There is no teams</div>}
+                                        {trainees?.length === 0 && <div className='no-data'>There is no trainees</div>}
                                     </div>
                                 </div>
                             </div>
